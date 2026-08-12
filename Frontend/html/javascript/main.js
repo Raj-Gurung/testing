@@ -396,13 +396,18 @@
       const fallbackSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%235B9DF9"><path d="M20 20 h20 v60 h-20 z M60 20 h20 v60 h-20 z M40 40 h20 v20 h-20 z"/><circle cx="50" cy="50" r="45" fill="none" stroke="%23ffcc00" stroke-width="8"/></svg>`;
 
       img.onerror = function () {
+        if (this.getAttribute('data-tried-fallback') === '2') {
+          this.src = fallbackSvg;
+          this.onerror = null;
+          return;
+        }
+        this.setAttribute('data-tried-fallback', (parseInt(this.getAttribute('data-tried-fallback') || '0') + 1).toString());
         if (this.src.includes('../img/')) {
           this.src = './img/nexsus_logo.png';
         } else if (this.src.includes('./img/')) {
-          this.src = '/img/nexsus_logo.png';
+          this.src = 'img/nexsus_logo.png';
         } else {
-          this.src = fallbackSvg;
-          this.onerror = null;
+          this.src = './img/nexsus_logo.png';
         }
       };
 
