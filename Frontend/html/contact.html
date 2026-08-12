@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Nexsus Logistics</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#101A2B;
+    --concrete:#ECE9E1;
+    --orange:#E15B0F;
+    --steel:#4A6274;
+    --line-dark: rgba(236,233,225,0.14);
+    --line-light: rgba(16,26,43,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--concrete);
+    color:var(--navy);
+    font-family:'Inter', sans-serif;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    flex-direction:column;
+  }
+  h1,h2,h3{
+    font-family:'Big Shoulders Display', sans-serif;
+    text-transform:uppercase;
+    line-height:0.94;
+    letter-spacing:0.01em;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.13em;
+    text-transform:uppercase;
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{content:""; width:16px; height:2px; background:var(--orange); display:inline-block;}
+
+  /* ===== NAVBAR ===== */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1f1f1f;
+    padding: 15px 40px;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .nav-links li {
+    position: relative;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 5px;
+    display: block;
+  }
+
+  .nav-links > li > a:hover {
+    color: #ffcc00;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #2b2b2b;
+    min-width: 180px;
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  .dropdown-content li {
+    width: 100%;
+  }
+
+  .dropdown-content a {
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #3d3d3d;
+    color: #ffcc00;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .dropdown > a::after {
+    content: " ▾";
+    font-size: 12px;
+  }
+
+  .page{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    max-width:1280px;
+    width:100%;
+    margin:0 auto;
+    padding:clamp(16px,2.4vw,28px) clamp(20px,4vw,64px);
+    gap:clamp(18px,2.6vw,28px);
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    background:var(--navy);
+    color:var(--concrete);
+    padding:clamp(28px,4vw,44px) clamp(24px,4vw,44px);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .hero h1{
+    font-size:clamp(28px,3.6vw,44px);
+    font-weight:900;
+  }
+  .hero h1 span{color:var(--orange);}
+  .hero p{
+    color:#B9C0CA;
+    font-size:14.5px;
+    max-width:36ch;
+    margin-top:6px;
+  }
+  .hero-cta{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--concrete);
+    border:1px solid var(--orange);
+    padding:12px 20px;
+    white-space:nowrap;
+  }
+  .hero-cta a{color:inherit; text-decoration:none;}
+
+  /* ===== INFO GRID ===== */
+  .info-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:1px;
+    background:var(--line-light);
+    border:1px solid var(--line-light);
+  }
+  .info-block{background:var(--concrete); padding:20px 22px;}
+  .info-block .k{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.07em;
+    text-transform:uppercase;
+    color:var(--orange);
+    margin-bottom:6px;
+  }
+  .info-block .v{font-size:15px; font-weight:500;}
+  .info-block .v a{color:var(--navy); text-decoration:none; border-bottom:1px solid var(--line-light);}
+  .info-block .v a:hover{border-color:var(--orange);}
+  .info-block .sub{color:var(--steel); font-size:12.5px; margin-top:3px;}
+
+  /* ===== SITES ===== */
+  .sites{flex:1; display:flex; flex-direction:column;}
+  .sites-head{margin-bottom:14px;}
+  .sites-head h2{font-size:clamp(22px,2.6vw,30px);}
+  .site-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--line-light);
+    border:1px solid var(--line-light);
+    flex:1;
+  }
+  .site{
+    background:var(--concrete);
+    padding:20px 22px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .site .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color:var(--orange);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .site h3{font-size:22px; text-transform:none; font-weight:700; margin:8px 0 6px;}
+  .site p{color:var(--steel); font-size:13px;}
+  .site .phone{margin-top:10px; font-size:13px; color:var(--navy); font-weight:500;}
+
+  footer{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--steel);
+    padding-top:4px;
+  }
+
+  @media (max-width:860px){
+    .info-grid{grid-template-columns:1fr 1fr;}
+    .site-grid{grid-template-columns:1fr;}
+    .hero{flex-direction:column; align-items:flex-start;}
+    .nav-links{gap:14px;}
+  }
+  @media (max-width:540px){
+    .info-grid{grid-template-columns:1fr;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="./home.html" class="logo-container">
+    <div class="logo">
+      <img src="../img/nexsus_logo.png" alt="Logo" onerror="this.src='./img/nexsus_logo.png'; this.onerror=null;">
+    </div>
+    <div class="brand-title">
+      Nexsus Logistics
+      <span>Warehousing &amp; Safety</span>
+    </div>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="./home.html">Home</a></li>
+    <li><a href="./about.html">About</a></li>
+    <li><a href="./guidelines.html">Guidelines</a></li>
+    <li><a href="./quiz.html">Quiz</a></li>
+    <li class="dropdown">
+      <a href="#training">Training</a>
+      <ul class="dropdown-content">
+        <li><a href="./crane.html">Crane Operator</a></li>
+        <li><a href="./forklift.html">Forklift Training</a></li>
+      </ul>
+    </li>
+    <li><a href="./contact.html" class="active">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Contact Nexsus</div>
+      <h1>Tell us what's <span>moving.</span></h1>
+      <p>Warehousing, sequencing, or freight capacity — reach us below.</p>
+    </div>
+    <div class="hero-cta"><a href="mailto:hello@nexsuslogistics.co.uk">hello@nexsuslogistics.co.uk</a></div>
+  </section>
+
+  <section class="info-grid">
+    <div class="info-block">
+      <div class="k">General</div>
+      <div class="v"><a href="mailto:hello@nexsuslogistics.co.uk">hello@nexsuslogistics.co.uk</a></div>
+    </div>
+    <div class="info-block">
+      <div class="k">Phone</div>
+      <div class="v"><a href="tel:+441915501234">+44 191 550 1234</a></div>
+      <div class="sub">Mon–Fri, 8:00–18:00 GMT</div>
+    </div>
+    <div class="info-block">
+      <div class="k">Head Office</div>
+      <div class="v">Wearside Trade Park</div>
+      <div class="sub">Sunderland, SR5 2TQ, UK</div>
+    </div>
+    <div class="info-block">
+      <div class="k">New Business</div>
+      <div class="v"><a href="mailto:partnerships@nexsuslogistics.co.uk">partnerships@nexsuslogistics.co.uk</a></div>
+      <div class="sub">Supply chain &amp; sequencing</div>
+    </div>
+  </section>
+
+  <section class="sites">
+    <div class="sites-head">
+      <div class="eyebrow">Our Sites</div>
+      <h2>Find us on the ground</h2>
+    </div>
+    <div class="site-grid">
+      <div class="site">
+        <div class="tag">Head Office</div>
+        <h3>Sunderland</h3>
+        <p>Unit 4, Wearside Trade Park<br>SR5 2TQ</p>
+        <div class="phone">+44 191 550 1234</div>
+      </div>
+      <div class="site">
+        <div class="tag">Warehousing</div>
+        <h3>Washington</h3>
+        <p>Bay 7, Crowther Industrial Estate<br>NE38 0AD</p>
+        <div class="phone">+44 191 550 1287</div>
+      </div>
+      <div class="site">
+        <div class="tag">Distribution</div>
+        <h3>Team Valley</h3>
+        <p>Plot 22, Team Valley Trading Estate<br>NE11 0BE</p>
+        <div class="phone">+44 191 550 1299</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Nexsus Logistics — Warehousing &amp; Freight for Automotive</footer>
+
+</div>
+<script src="../javascript/main.js"></script>
+</body>
+</html>

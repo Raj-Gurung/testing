@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Crane Ops Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="../javascript/main.js"></script>
+<style>
+  :root{
+    --bg-steel:#0D1420;
+    --panel:#141F2D;
+    --panel-2:#0F1826;
+    --panel-border:#2A3B4E;
+    --safety-yellow:#F5B700;
+    --hazard-orange:#E8590C;
+    --safe-green:#2BAE66;
+    --danger-red:#E23B3B;
+    --text-primary:#EAF0F6;
+    --text-muted:#8CA0B3;
+    --text-dim:#5B6D7E;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:var(--bg-steel); font-family:'Inter',sans-serif; color:var(--text-primary);}
+  #app{position:relative; width:100vw; height:100vh;}
+  canvas{display:block; touch-action:none;}
+
+  .hazard-edge{
+    background-image:repeating-linear-gradient(135deg, var(--safety-yellow) 0 10px, #14181D 10px 20px);
+  }
+
+  /* ---------- Top bar ---------- */
+  #topbar{
+    position:absolute; top:0; left:0; right:0; z-index:20;
+    display:flex; align-items:stretch; justify-content:space-between;
+    padding:10px 12px 0 12px; pointer-events:none;
+    gap:10px; flex-wrap:wrap;
+  }
+  .panel{
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--panel-border);
+    border-radius:6px;
+    pointer-events:auto;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+  }
+  #brand{
+    display:flex; align-items:center; gap:10px; padding:9px 16px 9px 10px;
+  }
+  #brand .stripe{width:6px; align-self:stretch; border-radius:3px;}
+  #brand h1{font-family:'Oswald',sans-serif; font-size:16px; letter-spacing:1.5px; margin:0; text-transform:uppercase; line-height:1.1;}
+  #brand span{display:block; font-size:10px; color:var(--text-muted); letter-spacing:1px; margin-top:2px; text-transform:uppercase;}
+
+  #objective{
+    flex:1; min-width:220px; max-width:480px;
+    padding:9px 14px; display:flex; flex-direction:column; justify-content:center;
+  }
+  #objective .lbl{font-size:10px; color:var(--safety-yellow); letter-spacing:1.5px; text-transform:uppercase; font-weight:600;}
+  #objective .txt{font-size:13px; color:var(--text-primary); margin-top:2px; line-height:1.35;}
+
+  #stats{
+    display:flex; align-items:stretch; gap:1px; overflow:hidden; border-radius:6px;
+  }
+  .stat{
+    padding:8px 14px; text-align:center; min-width:64px;
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--panel-border);
+  }
+  .stat .n{font-family:'JetBrains Mono',monospace; font-size:17px; font-weight:700;}
+  .stat .l{font-size:9px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; margin-top:1px;}
+
+  @media (max-width: 600px) {
+    #topbar { padding: 6px; gap: 6px; }
+    #brand h1 { font-size: 13px; }
+    #objective { display: none; }
+    .stat { padding: 6px 8px; min-width: 50px; }
+    .stat .n { font-size: 14px; }
+  }
+
+  /* ---------- Toasts ---------- */
+  #toasts{
+    position:absolute; top:74px; left:50%; transform:translateX(-50%);
+    z-index:30; display:flex; flex-direction:column; gap:6px; align-items:center;
+    pointer-events:none; width:min(92vw,420px);
+  }
+  .toast{
+    width:100%; padding:9px 12px 9px 10px; border-radius:5px; font-size:12.5px; line-height:1.35;
+    display:flex; gap:8px; align-items:flex-start; box-shadow:0 8px 20px rgba(0,0,0,0.45);
+    animation:toastIn .25s ease-out, toastOut .3s ease-in 3.6s forwards;
+    border-left:5px solid var(--safety-yellow);
+    background:var(--panel);
+    color:var(--text-primary);
+  }
+  .toast.warn{border-left-color:var(--hazard-orange);}
+  .toast.danger{border-left-color:var(--danger-red);}
+  .toast.good{border-left-color:var(--safe-green);}
+  .toast .ic{font-family:'Oswald',sans-serif; font-weight:700; font-size:11px; padding:1px 6px; border-radius:3px; flex-shrink:0; letter-spacing:0.5px;}
+  .toast.warn .ic{background:var(--hazard-orange); color:#241000;}
+  .toast.danger .ic{background:var(--danger-red); color:#2a0a0a;}
+  .toast.good .ic{background:var(--safe-green); color:#062015;}
+  .toast:not(.warn):not(.danger):not(.good) .ic{background:var(--safety-yellow); color:#241a00;}
+  @keyframes toastIn{from{opacity:0; transform:translateY(-8px);} to{opacity:1; transform:translateY(0);}}
+  @keyframes toastOut{to{opacity:0; transform:translateY(-6px);}}
+
+  /* ---------- Bottom control cluster ---------- */
+  #controls{
+    position:absolute; left:0; right:0; bottom:0; z-index:20;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    padding:0 12px 12px 12px; pointer-events:none; gap:10px; flex-wrap:wrap-reverse;
+  }
+  .padgroup{
+    pointer-events:auto; padding:10px; display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .padgroup .title{font-size:9px; letter-spacing:1.5px; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:2px; display:flex; align-items:center; gap:6px; white-space:nowrap;}
+  .keyhint{
+    font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.5px; color:var(--safety-yellow);
+    background:#1B2937; border:1px solid var(--panel-border); border-radius:3px; padding:1px 5px;
+  }
+  .keycap{
+    font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:#221a00;
+    background:var(--safety-yellow); border-radius:3px; padding:0 5px; margin-left:5px; line-height:15px;
+  }
+  .padbtn.active .keycap{background:#221a00; color:var(--safety-yellow);}
+  .dpad{display:grid; grid-template-columns:repeat(3,40px); grid-template-rows:repeat(3,40px); gap:4px;}
+  .dpad button{grid-column:auto;}
+  .padbtn{
+    background:#1B2937; border:1px solid var(--panel-border); border-radius:6px; color:var(--text-primary);
+    font-size:16px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+    user-select:none; transition:background .1s, transform .05s;
+  }
+  .padbtn:active, .padbtn.active{background:var(--safety-yellow); color:#221a00; transform:scale(0.94);}
+  .hoistpad{display:flex; flex-direction:column; gap:4px;}
+  .hoistpad .padbtn{width:88px; height:40px; font-size:12px; letter-spacing:0.5px; gap:2px;}
+  .actionpad{display:flex; flex-direction:column; align-items:center; gap:8px;}
+  #attachBtn{
+    width:110px; height:56px; border-radius:8px; border:1px solid var(--panel-border);
+    background:linear-gradient(180deg,#1B2937,#141F2D); color:var(--text-primary);
+    font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:1px; text-transform:uppercase; font-weight:600;
+    cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  }
+  #attachBtn.ready{background:linear-gradient(180deg,var(--safe-green),#1c8850); color:#04150c; border-color:transparent;}
+  #attachBtn:active{transform:scale(0.97);}
+  #attachBtn small{font-size:9px; opacity:.85; font-weight:400; letter-spacing:0.5px;}
+
+  #resetBtn{
+    pointer-events:auto; align-self:flex-end;
+    background:var(--panel); border:1px solid var(--panel-border); color:var(--text-muted);
+    font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:8px 12px; border-radius:6px;
+    cursor:pointer; font-weight:600;
+  }
+  #resetBtn:hover{color:var(--text-primary); border-color:var(--safety-yellow);}
+
+  /* ---------- Swing gauge ---------- */
+  #swingWrap{
+    pointer-events:auto; padding:10px 12px; width:150px;
+  }
+  #swingWrap .title{font-size:9px; letter-spacing:1.5px; color:var(--text-muted); text-transform:uppercase; font-weight:600;}
+  #swingTrack{
+    margin-top:8px; position:relative; height:8px; border-radius:4px; background:#0A1017;
+    border:1px solid var(--panel-border); overflow:hidden;
+  }
+  #swingFill{position:absolute; left:50%; top:0; bottom:0; width:2px; background:var(--safe-green); transition:background .15s;}
+  #swingCenter{position:absolute; left:50%; top:-3px; bottom:-3px; width:1px; background:var(--text-dim); transform:translateX(-50%);}
+  #swingLabel{margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-muted);}
+
+  /* ---------- Overlays ---------- */
+  .overlay{
+    position:absolute; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse at center, rgba(13,20,32,0.88), rgba(6,10,16,0.96));
+    backdrop-filter:blur(2px);
+  }
+  .card{
+    width:min(92vw, 560px); background:var(--panel); border:1px solid var(--panel-border); border-radius:10px;
+    padding:0; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  }
+  .card-tape{height:8px;}
+  .card-body{padding:26px 28px 28px 28px;}
+  .eyebrow{font-size:11px; letter-spacing:2px; color:var(--safety-yellow); text-transform:uppercase; font-weight:600; margin-bottom:6px;}
+  .card h2{font-family:'Oswald',sans-serif; font-size:26px; letter-spacing:0.5px; margin:0 0 14px 0; text-transform:uppercase;}
+  .card p{font-size:14px; line-height:1.6; color:var(--text-muted); margin:0 0 16px 0;}
+  .rules{list-style:none; margin:0 0 20px 0; padding:0; display:flex; flex-direction:column; gap:9px;}
+  .rules li{display:flex; gap:10px; align-items:flex-start; font-size:13px; line-height:1.5; color:var(--text-primary);}
+  .rules li .k{font-family:'JetBrains Mono',monospace; font-size:11px; background:#1B2937; border:1px solid var(--panel-border); border-radius:4px; padding:2px 7px; flex-shrink:0; color:var(--safety-yellow); min-width:64px; text-align:center;}
+  .primary-btn{
+    width:100%; padding:14px; border:none; border-radius:7px; cursor:pointer;
+    background:linear-gradient(180deg, var(--safety-yellow), #d69e00); color:#241a00;
+    font-family:'Oswald',sans-serif; font-size:15px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700;
+  }
+  .primary-btn:active{transform:scale(0.99);}
+
+  .resultgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:18px;}
+  .resultgrid .box{background:#0F1826; border:1px solid var(--panel-border); border-radius:7px; padding:12px 8px; text-align:center;}
+  .resultgrid .box .n{font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700;}
+  .resultgrid .box .l{font-size:9px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; margin-top:3px;}
+  .recap{background:#0F1826; border:1px solid var(--panel-border); border-radius:7px; padding:12px 14px; margin-bottom:18px; max-height:130px; overflow-y:auto;}
+  .recap div{font-size:12px; line-height:1.5; color:var(--text-muted); padding:3px 0; border-bottom:1px solid #1c2a3a;}
+  .recap div:last-child{border-bottom:none;}
+
+  #loading{position:absolute; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; background:var(--bg-steel); flex-direction:column; gap:14px;}
+  #loading .spin{width:34px; height:34px; border-radius:50%; border:3px solid #1B2937; border-top-color:var(--safety-yellow); animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #loading span{font-family:'Oswald',sans-serif; letter-spacing:2px; font-size:12px; color:var(--text-muted); text-transform:uppercase;}
+
+  @media (max-width: 640px){
+    #objective{display:none;}
+    .dpad{grid-template-columns:repeat(3,36px); grid-template-rows:repeat(3,36px);}
+    .hoistpad .padbtn{width:78px; height:36px; font-size:11px;}
+    #swingWrap{width:120px;}
+    .card-body{padding:20px 18px 22px 18px;}
+    .card h2{font-size:21px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="loading"><div class="spin"></div><span>Loading Crane Bay&hellip;</span></div>
+
+  <div id="toasts"></div>
+
+  <div id="topbar">
+    <div id="brand" class="panel hazard-edge-wrap">
+      <div class="stripe hazard-edge"></div>
+      <div>
+        <h1>Crane Ops Trainer</h1>
+        <span>Overhead Gantry &middot; Module 01</span>
+      </div>
+    </div>
+    <div id="objective" class="panel">
+      <div class="lbl">Current objective</div>
+      <div class="txt" id="objectiveText">Loading briefing&hellip;</div>
+    </div>
+    <div id="stats">
+      <div class="stat"><div class="n" id="statTime">00:00</div><div class="l">Time</div></div>
+      <div class="stat"><div class="n" id="statScore">100</div><div class="l">Score</div></div>
+      <div class="stat"><div class="n" id="statIncidents">0</div><div class="l">Flags</div></div>
+    </div>
+  </div>
+
+  <div id="controls">
+    <div class="padgroup panel">
+      <div class="title">Gantry / Trolley <span class="keyhint">ARROW KEYS</span></div>
+      <div class="dpad">
+        <div></div>
+        <button class="padbtn" data-key="fwd" title="Forward (\u2191)">&#9650;</button>
+        <div></div>
+        <button class="padbtn" data-key="left" title="Left (\u2190)">&#9664;</button>
+        <button class="padbtn" data-key="stop" title="center">&#9679;</button>
+        <button class="padbtn" data-key="right" title="Right (\u2192)">&#9654;</button>
+        <div></div>
+        <button class="padbtn" data-key="back" title="Back (\u2193)">&#9660;</button>
+        <div></div>
+      </div>
+    </div>
+
+    <div class="padgroup panel">
+      <div class="title">Hoist <span class="keyhint">W / S</span></div>
+      <div class="hoistpad">
+        <button class="padbtn" data-key="hoistUp" title="Up (W)">UP <span class="keycap">W</span></button>
+        <button class="padbtn" data-key="hoistDown" title="Down (S)">DOWN <span class="keycap">S</span></button>
+      </div>
+    </div>
+
+    <div class="padgroup panel">
+      <div class="title">Load</div>
+      <div class="actionpad">
+        <button id="attachBtn">
+          <span id="attachLabel">ATTACH</span>
+          <small>SPACE</small>
+        </button>
+      </div>
+    </div>
+
+    <div id="swingWrap" class="panel">
+      <div class="title">Load Swing</div>
+      <div id="swingTrack"><div id="swingCenter"></div><div id="swingFill"></div></div>
+      <div id="swingLabel">STABLE &middot; 0.00</div>
+    </div>
+
+    <button id="resetBtn" class="panel">&#8635; Reset Sim</button>
+  </div>
+
+  <!-- Start Overlay -->
+  <div class="overlay" id="startOverlay">
+    <div class="card">
+      <div class="card-tape hazard-edge"></div>
+      <div class="card-body">
+        <div class="eyebrow">Health &amp; Safety &middot; Practical Module</div>
+        <h2>Overhead Crane Handling</h2>
+        <p>You're operating a warehouse overhead gantry crane. Lift the crate from the marked pickup zone, carry it clear of the hazard walkway, and set it down gently inside the drop zone &mdash; without letting it swing.</p>
+        <ul class="rules">
+          <li><span class="k">&#9664; &#9650; &#9660; &#9654;</span> Move the gantry (fwd/back) and trolley (left/right)</li>
+          <li><span class="k">W / S</span> Hoist the hook up / down</li>
+          <li><span class="k">SPACE</span> Attach the hook &middot; release the load</li>
+          <li><span class="k">DRAG</span> Orbit the camera &middot; <span class="k">SCROLL</span> Zoom</li>
+        </ul>
+        <p style="margin-bottom:22px;">Sudden starts and stops make the load swing &mdash; smooth, gradual movements keep it under control. Never carry a load over the striped hazard zone.</p>
+        <button class="primary-btn" id="startBtn">Begin Simulation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Overlay -->
+  <div class="overlay" id="endOverlay" style="display:none;">
+    <div class="card">
+      <div class="card-tape hazard-edge"></div>
+      <div class="card-body">
+        <div class="eyebrow" id="endEyebrow">Lift Complete</div>
+        <h2 id="endTitle">Load Placed Safely</h2>
+        <div class="resultgrid">
+          <div class="box"><div class="n" id="endScore">100</div><div class="l">Final Score</div></div>
+          <div class="box"><div class="n" id="endTime">00:00</div><div class="l">Duration</div></div>
+          <div class="box"><div class="n" id="endIncidents">0</div><div class="l">Safety Flags</div></div>
+        </div>
+        <div class="recap" id="endRecap"></div>
+        <button class="primary-btn" id="retryBtn">Run Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     CONFIG
+  ============================================================ */
+  var COLORS = {
+    bg: 0x0D1420,
+    floor: 0x37414D,
+    floorLine: 0x232B34,
+    steel: 0x8A96A3,
+    steelDark: 0x5A6572,
+    yellow: 0xF5B700,
+    orange: 0xE8590C,
+    green: 0x2BAE66,
+    red: 0xE23B3B
+  };
+
+  var BRIDGE_HEIGHT = 9.2;
+  var RAIL_Z = 9.5;
+  var GANTRY_X_MIN = -15, GANTRY_X_MAX = 15;
+  var TROLLEY_Z_MIN = -8.2, TROLLEY_Z_MAX = 8.2;
+  var HOIST_MIN = 0.4, HOIST_MAX = 8.15; // hoistDrop below bridge
+  var CRATE_H = 1.3, CRATE_W = 1.7, CRATE_REST_Y = CRATE_H / 2;
+  var HOOK_OFFSET = 0.55;
+
+  var ZONE_A = { x: -11, z: 0, sx: 4.4, sz: 4.4 };
+  var ZONE_B = { x: 11, z: 0, sx: 4.4, sz: 4.4 };
+  var HAZARD = { x: 0, z: 0, sx: 6.4, sz: 7.2 };
+
+  var MOVE_ACCEL = 3.0, MOVE_MAX = 2.7;
+  var HOIST_ACCEL = 3.2, HOIST_MAX_SPD = 2.3;
+  var SWING_STIFF = 6.2, SWING_DAMP = 3.4, SWING_DRIVE = 1.05, SWING_MAX = 2.6;
+  var SWING_WARN = 0.85, SWING_DANGER = 1.5;
+
+  /* ============================================================
+     STATE
+  ============================================================ */
+  var state = {
+    gantryX: GANTRY_X_MIN + 3, gantryVelX: 0,
+    trolleyZ: 0, trolleyVelZ: 0,
+    hoistDrop: HOIST_MIN, hoistVel: 0,
+    swingX: 0, swingZ: 0, swingVelX: 0, swingVelZ: 0,
+    prevGantryVelX: 0, prevTrolleyVelZ: 0,
+    attached: false,
+    cratePos: new THREE.Vector3(ZONE_A.x, CRATE_REST_Y, ZONE_A.z),
+    running: false,
+    finished: false,
+    score: 100,
+    incidents: 0,
+    startTime: 0,
+    elapsed: 0,
+    stage: 0, // 0 = pickup, 1 = carry, 2 = done
+    log: []
+  };
+  var keys = { left:false, right:false, fwd:false, back:false, hoistUp:false, hoistDown:false };
+  var cooldowns = { swing:0, hazard:0, limit:0 };
+
+  /* ============================================================
+     THREE SETUP
+  ============================================================ */
+  var app = document.getElementById('app');
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(COLORS.bg);
+  scene.fog = new THREE.Fog(COLORS.bg, 26, 68);
+
+  var camera = new THREE.PerspectiveCamera(46, window.innerWidth/window.innerHeight, 0.1, 200);
+  var renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  app.appendChild(renderer.domElement);
+
+  // lights
+  var hemi = new THREE.HemisphereLight(0x8fa6bd, 0x1a1f26, 0.65);
+  scene.add(hemi);
+  var sun = new THREE.DirectionalLight(0xfff2d9, 0.95);
+  sun.position.set(18, 26, 12);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.camera.left = -30; sun.shadow.camera.right = 30;
+  sun.shadow.camera.top = 30; sun.shadow.camera.bottom = -30;
+  sun.shadow.camera.near = 1; sun.shadow.camera.far = 70;
+  sun.shadow.bias = -0.0015;
+  scene.add(sun);
+  var fill = new THREE.DirectionalLight(0x4d6a8a, 0.28);
+  fill.position.set(-14, 10, -14);
+  scene.add(fill);
+
+  /* ---------- texture helpers ---------- */
+  function stripeTexture(c1, c2, repX, repY){
+    var cv = document.createElement('canvas'); cv.width = 128; cv.height = 128;
+    var ctx = cv.getContext('2d');
+    ctx.fillStyle = c1; ctx.fillRect(0,0,128,128);
+    ctx.strokeStyle = c2; ctx.lineWidth = 26;
+    for(var i=-2;i<6;i++){
+      ctx.beginPath();
+      ctx.moveTo(i*32-32, 160); ctx.lineTo(i*32+96, -32);
+      ctx.stroke();
+    }
+    var tex = new THREE.CanvasTexture(cv);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(repX||1, repY||1);
+    return tex;
+  }
+  function labelTexture(text, sub, bg, fg){
+    var cv = document.createElement('canvas'); cv.width = 512; cv.height = 256;
+    var ctx = cv.getContext('2d');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,512,256);
+    ctx.strokeStyle = fg; ctx.lineWidth = 10;
+    ctx.strokeRect(14,14,512-28,256-28);
+    ctx.fillStyle = fg;
+    ctx.font = '700 54px Oswald, Arial, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, 256, 118);
+    ctx.font = '400 26px Arial, sans-serif';
+    ctx.fillText(sub, 256, 168);
+    return new THREE.CanvasTexture(cv);
+  }
+  function plankTexture(){
+    var cv = document.createElement('canvas'); cv.width=256; cv.height=256;
+    var ctx = cv.getContext('2d');
+    ctx.fillStyle = '#8a5a34'; ctx.fillRect(0,0,256,256);
+    for(var i=0;i<5;i++){
+      ctx.fillStyle = i%2===0 ? '#966038' : '#7c4f2c';
+      ctx.fillRect(0, i*52, 256, 50);
+    }
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 3;
+    for(var j=0;j<6;j++){ ctx.beginPath(); ctx.moveTo(0,j*52); ctx.lineTo(256,j*52); ctx.stroke(); }
+    // diagonal hazard corner
+    ctx.fillStyle = COLORS_JS(COLORS.yellow);
+    ctx.save(); ctx.translate(0,0);
+    ctx.fillStyle = '#f5b700';
+    ctx.fillRect(0,0,52,14);
+    ctx.restore();
+    return new THREE.CanvasTexture(cv);
+  }
+  function COLORS_JS(hex){ return '#'+hex.toString(16).padStart(6,'0'); }
+
+  /* ---------- floor ---------- */
+  var floorGeo = new THREE.PlaneGeometry(48, 26, 1, 1);
+  var floorMat = new THREE.MeshStandardMaterial({ color: COLORS.floor, roughness: 0.95, metalness: 0.05 });
+  var floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = -Math.PI/2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // subtle floor grid lines
+  var grid = new THREE.GridHelper(48, 24, 0x232B34, 0x1B2229);
+  grid.position.y = 0.01;
+  scene.add(grid);
+
+  function zoneMesh(zone, color, label, sub){
+    var g = new THREE.Group();
+    var tex = labelTexture(label, sub, COLORS_JS(0x0d1420), COLORS_JS(color));
+    var mat = new THREE.MeshBasicMaterial({ color: color, transparent:true, opacity:0.16 });
+    var fillMesh = new THREE.Mesh(new THREE.PlaneGeometry(zone.sx, zone.sz), mat);
+    fillMesh.rotation.x = -Math.PI/2; fillMesh.position.set(zone.x, 0.02, zone.z);
+    g.add(fillMesh);
+    // border made of thin boxes (hazard tape look)
+    var borderMat = new THREE.MeshBasicMaterial({ map: stripeTexture('#0d1420', COLORS_JS(color), 6, 1) });
+    var t = 0.28;
+    var edges = [
+      { w: zone.sx+t, d: t, x: zone.x, z: zone.z - zone.sz/2 },
+      { w: zone.sx+t, d: t, x: zone.x, z: zone.z + zone.sz/2 },
+      { w: t, d: zone.sz+t, x: zone.x - zone.sx/2, z: zone.z },
+      { w: t, d: zone.sz+t, x: zone.x + zone.sx/2, z: zone.z }
+    ];
+    edges.forEach(function(e){
+      var m = new THREE.Mesh(new THREE.BoxGeometry(e.w, 0.05, e.d), borderMat);
+      m.position.set(e.x, 0.03, e.z);
+      g.add(m);
+    });
+    // floating label plane
+    var lblMat = new THREE.MeshBasicMaterial({ map: tex, transparent:true });
+    var lbl = new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.2), lblMat);
+    lbl.rotation.x = -Math.PI/2;
+    lbl.position.set(zone.x, 0.05, zone.z + zone.sz/2 - 1.1);
+    g.add(lbl);
+    scene.add(g);
+    return g;
+  }
+  zoneMesh(ZONE_A, COLORS.yellow, 'ZONE A', 'PICKUP');
+  zoneMesh(ZONE_B, COLORS.green, 'ZONE B', 'SET DOWN');
+
+  // hazard exclusion zone
+  var hazardMat = new THREE.MeshBasicMaterial({ map: stripeTexture('#0d1420', '#E8590C', 5, 2.2), transparent:true, opacity:0.75 });
+  var hazardMesh = new THREE.Mesh(new THREE.PlaneGeometry(HAZARD.sx, HAZARD.sz), hazardMat);
+  hazardMesh.rotation.x = -Math.PI/2;
+  hazardMesh.position.set(HAZARD.x, 0.015, HAZARD.z);
+  scene.add(hazardMesh);
+  var hazLabelTex = labelTexture('HAZARD', 'NO LOAD PASS', '#0d1420', COLORS_JS(0xE8590C));
+  var hazLabel = new THREE.Mesh(new THREE.PlaneGeometry(2.2,1.1), new THREE.MeshBasicMaterial({map:hazLabelTex, transparent:true}));
+  hazLabel.rotation.x = -Math.PI/2;
+  hazLabel.position.set(HAZARD.x, 0.03, HAZARD.z);
+  scene.add(hazLabel);
+
+  /* ---------- crane structure ---------- */
+  var steelMat = new THREE.MeshStandardMaterial({ color: COLORS.yellow, roughness: 0.55, metalness: 0.4 });
+  var steelDarkMat = new THREE.MeshStandardMaterial({ color: COLORS.steelDark, roughness: 0.6, metalness: 0.5 });
+  var railMat = new THREE.MeshStandardMaterial({ color: 0x2a2f36, roughness: 0.7, metalness: 0.3 });
+
+  // rails
+  [-RAIL_Z, RAIL_Z].forEach(function(z){
+    var rail = new THREE.Mesh(new THREE.BoxGeometry(GANTRY_X_MAX-GANTRY_X_MIN+4, 0.16, 0.5), railMat);
+    rail.position.set(0, 0.08, z);
+    rail.receiveShadow = true;
+    scene.add(rail);
+  });
+
+  var gantry = new THREE.Group();
+  scene.add(gantry);
+
+  function buildLegPair(zSign){
+    var legGroup = new THREE.Group();
+    var legGeo = new THREE.BoxGeometry(0.42, BRIDGE_HEIGHT, 0.42);
+    var offsets = [-0.55, 0.55];
+    offsets.forEach(function(ox){
+      var leg = new THREE.Mesh(legGeo, steelMat);
+      leg.position.set(ox, BRIDGE_HEIGHT/2, 0);
+      leg.castShadow = true; leg.receiveShadow = true;
+      legGroup.add(leg);
+    });
+    // cross brace
+    var brace = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, 0.14), steelDarkMat);
+    brace.position.set(0, BRIDGE_HEIGHT*0.55, 0);
+    legGroup.add(brace);
+    var brace2 = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.14, 0.14), steelDarkMat);
+    brace2.position.set(0, BRIDGE_HEIGHT*0.22, 0);
+    legGroup.add(brace2);
+    // wheel block
+    var wheel = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.22, 0.6), steelDarkMat);
+    wheel.position.set(0, 0.11, 0);
+    legGroup.add(wheel);
+    legGroup.position.set(0, 0, zSign);
+    return legGroup;
+  }
+  gantry.add(buildLegPair(-RAIL_Z));
+  gantry.add(buildLegPair(RAIL_Z));
+
+  var bridge = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, RAIL_Z*2+0.6), steelMat);
+  bridge.position.set(0, BRIDGE_HEIGHT, 0);
+  bridge.castShadow = true;
+  gantry.add(bridge);
+  var bridgeRail = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, RAIL_Z*2+0.6), steelDarkMat);
+  bridgeRail.position.set(0, BRIDGE_HEIGHT+0.32, 0);
+  gantry.add(bridgeRail);
+
+  // hazard stripe band on bridge
+  var bridgeStripe = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.16, RAIL_Z*2+0.62), new THREE.MeshBasicMaterial({ map: stripeTexture('#111', '#F5B700', 1, 14) }));
+  bridgeStripe.position.set(0, BRIDGE_HEIGHT-0.28, 0);
+  gantry.add(bridgeStripe);
+
+  // trolley
+  var trolley = new THREE.Group();
+  var trolleyBody = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.5, 0.9), steelDarkMat);
+  trolleyBody.castShadow = true;
+  trolley.add(trolleyBody);
+  var motorBox = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.3,0.5), steelMat);
+  motorBox.position.set(0, 0.36, 0);
+  trolley.add(motorBox);
+  trolley.position.set(0, BRIDGE_HEIGHT, 0);
+  gantry.add(trolley);
+
+  // cable (solid cylinder, re-oriented each frame — a thin Line is nearly
+  // invisible against a dark background, so the hoist rope is a real mesh)
+  var cableMat = new THREE.MeshStandardMaterial({ color: 0xD8DEE4, metalness: 0.35, roughness: 0.45, emissive: 0x30343a, emissiveIntensity: 0.3 });
+  var cableGeo = new THREE.CylinderGeometry(1, 1, 1, 8, 1, false);
+  cableGeo.translate(0, 0.5, 0); // pivot at the top end so scale.y = length works from the anchor point
+  var cable = new THREE.Mesh(cableGeo, cableMat);
+  cable.castShadow = true;
+  scene.add(cable);
+  var CABLE_RADIUS = 0.055;
+  var cableUp = new THREE.Vector3(0, 1, 0);
+  var cableDirTmp = new THREE.Vector3();
+  function updateCable(topVec, bottomVec){
+    cableDirTmp.subVectors(bottomVec, topVec);
+    var len = Math.max(0.05, cableDirTmp.length());
+    cable.position.copy(topVec);
+    cable.scale.set(CABLE_RADIUS, len, CABLE_RADIUS);
+    cable.quaternion.setFromUnitVectors(cableUp, cableDirTmp.normalize());
+  }
+
+  // hook
+  var hookGroup = new THREE.Group();
+  var hookMat = new THREE.MeshStandardMaterial({ color: 0xB9C2CB, metalness:0.75, roughness:0.3 });
+  var hookTorus = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.045, 8, 16, Math.PI*1.5), hookMat);
+  hookTorus.rotation.x = Math.PI/2;
+  hookGroup.add(hookTorus);
+  var hookBlock = new THREE.Mesh(new THREE.BoxGeometry(0.18,0.18,0.18), hookMat);
+  hookBlock.position.y = 0.16;
+  hookGroup.add(hookBlock);
+  scene.add(hookGroup);
+
+  // crate
+  var crateGroup = new THREE.Group();
+  var sideMat = new THREE.MeshStandardMaterial({ map: plankTexture(), roughness: 0.85 });
+  var topTex = labelTexture('MAX 500KG', 'HANDLE WITH CARE', '#8a5a34', '#1a1206');
+  var topMat = new THREE.MeshStandardMaterial({ map: topTex, roughness: 0.85 });
+  var crateMats = [sideMat, sideMat, topMat, sideMat, sideMat, sideMat];
+  var crateMesh = new THREE.Mesh(new THREE.BoxGeometry(CRATE_W, CRATE_H, CRATE_W), crateMats);
+  crateMesh.castShadow = true; crateMesh.receiveShadow = true;
+  crateGroup.add(crateMesh);
+  scene.add(crateGroup);
+  crateGroup.position.copy(state.cratePos);
+
+  /* ---------- background warehouse dressing ---------- */
+  function addColumn(x,z){
+    var col = new THREE.Mesh(new THREE.BoxGeometry(0.6, 11, 0.6), new THREE.MeshStandardMaterial({color:0x28303a, roughness:0.9}));
+    col.position.set(x, 5.5, z);
+    col.receiveShadow = true;
+    scene.add(col);
+  }
+  [-20,-6,6,20].forEach(function(x){ addColumn(x, -12.5); addColumn(x, 12.5); });
+
+  var backWallMat = new THREE.MeshStandardMaterial({ color: 0x151d27, roughness:1 });
+  var backWall = new THREE.Mesh(new THREE.PlaneGeometry(60, 16), backWallMat);
+  backWall.position.set(0, 8, -13.2);
+  scene.add(backWall);
+
+  /* ============================================================
+     CAMERA ORBIT (manual)
+  ============================================================ */
+  var cam = { radius: 30, theta: Math.PI*0.28, phi: 1.02, target: new THREE.Vector3(0, 4.5, 0) };
+  function updateCamera(){
+    var x = cam.target.x + cam.radius*Math.sin(cam.phi)*Math.sin(cam.theta);
+    var y = cam.target.y + cam.radius*Math.cos(cam.phi);
+    var z = cam.target.z + cam.radius*Math.sin(cam.phi)*Math.cos(cam.theta);
+    camera.position.set(x,y,z);
+    camera.lookAt(cam.target);
+  }
+  updateCamera();
+
+  var dragging = false, lastX=0, lastY=0;
+  function pointerDown(x,y){ dragging = true; lastX = x; lastY = y; }
+  function pointerMove(x,y){
+    if(!dragging) return;
+    var dx = x-lastX, dy = y-lastY;
+    lastX = x; lastY = y;
+    cam.theta -= dx*0.006;
+    cam.phi -= dy*0.006;
+    cam.phi = Math.max(0.35, Math.min(1.45, cam.phi));
+    updateCamera();
+  }
+  function pointerUp(){ dragging = false; }
+  renderer.domElement.addEventListener('mousedown', function(e){ pointerDown(e.clientX,e.clientY); });
+  window.addEventListener('mousemove', function(e){ pointerMove(e.clientX,e.clientY); });
+  window.addEventListener('mouseup', pointerUp);
+  renderer.domElement.addEventListener('touchstart', function(e){ if(e.touches.length===1){ pointerDown(e.touches[0].clientX, e.touches[0].clientY);} }, {passive:true});
+  renderer.domElement.addEventListener('touchmove', function(e){ if(e.touches.length===1){ pointerMove(e.touches[0].clientX, e.touches[0].clientY);} }, {passive:true});
+  renderer.domElement.addEventListener('touchend', pointerUp);
+  renderer.domElement.addEventListener('wheel', function(e){
+    cam.radius += e.deltaY*0.02;
+    cam.radius = Math.max(14, Math.min(46, cam.radius));
+    updateCamera();
+  }, {passive:true});
+
+  window.addEventListener('resize', function(){
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  /* ============================================================
+     UI WIRING
+  ============================================================ */
+  var toastsEl = document.getElementById('toasts');
+  function toast(msg, type){
+    var el = document.createElement('div');
+    el.className = 'toast' + (type ? ' '+type : '');
+    var ic = document.createElement('div');
+    ic.className = 'ic';
+    ic.textContent = type === 'danger' ? '!!' : type === 'warn' ? '!' : type === 'good' ? 'OK' : 'TIP';
+    var txt = document.createElement('div');
+    txt.textContent = msg;
+    el.appendChild(ic); el.appendChild(txt);
+    toastsEl.appendChild(el);
+    state.log.unshift(msg);
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 4000);
+    while(toastsEl.children.length > 3){ toastsEl.removeChild(toastsEl.firstChild); }
+  }
+
+  var objectiveText = document.getElementById('objectiveText');
+  var statTime = document.getElementById('statTime');
+  var statScore = document.getElementById('statScore');
+  var statIncidents = document.getElementById('statIncidents');
+  var swingFill = document.getElementById('swingFill');
+  var swingLabel = document.getElementById('swingLabel');
+  var attachBtn = document.getElementById('attachBtn');
+  var attachLabel = document.getElementById('attachLabel');
+
+  var OBJECTIVES = [
+    'Drive the trolley over the crate in Zone A, lower the hook, and press ATTACH.',
+    'Lift clear, then carry the load to Zone B \u2014 route around the orange hazard zone and keep swing low.',
+    'Lower the load fully to the floor inside Zone B, then press RELEASE.'
+  ];
+  function currentObjective(){
+    if(state.attached) return OBJECTIVES[1];
+    if(state.stage === 0) return OBJECTIVES[0];
+    return 'Re-attach the hook right where the load is sitting, then continue on to Zone B.';
+  }
+
+  function setKeyBtn(name, val){
+    keys[name] = val;
+    var btn = document.querySelector('.padbtn[data-key="'+({left:'left',right:'right',fwd:'fwd',back:'back',hoistUp:'hoistUp',hoistDown:'hoistDown'}[name])+'"]');
+    if(btn) btn.classList.toggle('active', val);
+  }
+
+  function bindHold(el, downFn, upFn){
+    el.addEventListener('mousedown', function(e){ e.preventDefault(); downFn(); });
+    el.addEventListener('mouseup', function(e){ upFn(); });
+    el.addEventListener('mouseleave', function(e){ upFn(); });
+    el.addEventListener('touchstart', function(e){ e.preventDefault(); downFn(); }, {passive:false});
+    el.addEventListener('touchend', function(e){ e.preventDefault(); upFn(); }, {passive:false});
+  }
+
+  document.querySelectorAll('.padbtn[data-key]').forEach(function(btn){
+    var k = btn.getAttribute('data-key');
+    if(k === 'stop'){
+      bindHold(btn, function(){}, function(){});
+      return;
+    }
+    bindHold(btn,
+      function(){ setKeyBtn(k, true); },
+      function(){ setKeyBtn(k, false); }
+    );
+  });
+
+  bindHold(attachBtn, function(){ tryAttachToggle(); }, function(){});
+
+  document.getElementById('resetBtn').addEventListener('click', resetSim);
+  document.getElementById('startBtn').addEventListener('click', function(){
+    document.getElementById('startOverlay').style.display = 'none';
+    startSim();
+  });
+  document.getElementById('retryBtn').addEventListener('click', function(){
+    document.getElementById('endOverlay').style.display = 'none';
+    resetSim(); startSim();
+  });
+
+  window.addEventListener('keydown', function(e){
+    if(e.repeat) return;
+    switch(e.code){
+      case 'ArrowLeft': case 'KeyA': setKeyBtn('left', true); break;
+      case 'ArrowRight': case 'KeyD': setKeyBtn('right', true); break;
+      case 'ArrowUp': setKeyBtn('fwd', true); break;
+      case 'ArrowDown': setKeyBtn('back', true); break;
+      case 'KeyW': setKeyBtn('hoistUp', true); break;
+      case 'KeyS': setKeyBtn('hoistDown', true); break;
+      case 'Space': e.preventDefault(); tryAttachToggle(); break;
+    }
+  });
+  window.addEventListener('keyup', function(e){
+    switch(e.code){
+      case 'ArrowLeft': case 'KeyA': setKeyBtn('left', false); break;
+      case 'ArrowRight': case 'KeyD': setKeyBtn('right', false); break;
+      case 'ArrowUp': setKeyBtn('fwd', false); break;
+      case 'ArrowDown': setKeyBtn('back', false); break;
+      case 'KeyW': setKeyBtn('hoistUp', false); break;
+      case 'KeyS': setKeyBtn('hoistDown', false); break;
+    }
+  });
+
+  /* ============================================================
+     GAME LOGIC
+  ============================================================ */
+  function dist2D(x1,z1,x2,z2){ var dx=x1-x2, dz=z1-z2; return Math.sqrt(dx*dx+dz*dz); }
+  function inZone(x,z,zone){ return Math.abs(x-zone.x) <= zone.sx/2 && Math.abs(z-zone.z) <= zone.sz/2; }
+
+  function hookWorldPos(){
+    return {
+      x: state.gantryX,
+      y: BRIDGE_HEIGHT - state.hoistDrop,
+      z: state.trolleyZ
+    };
+  }
+
+  function tryAttachToggle(){
+    if(!state.running || state.finished) return;
+    var hp = hookWorldPos();
+    if(!state.attached){
+      var d = dist2D(hp.x, hp.z, state.cratePos.x, state.cratePos.z);
+      var crateTop = state.cratePos.y + CRATE_H/2;
+      if(d < 1.15 && hp.y < crateTop + 1.3){
+        state.attached = true;
+        state.stage = 1;
+        toast('Load attached. Lift smoothly \u2014 avoid jerky starts.', 'good');
+      } else {
+        toast('Hook is not positioned over the load. Align trolley and lower closer, then try again.', 'warn');
+      }
+    } else {
+      if(inZone(state.cratePos.x, state.cratePos.z, HAZARD)){
+        toast('You can\'t set the load down inside the hazard zone. Lift it clear and move to open ground or Zone B first.', 'danger');
+      } else if(state.cratePos.y <= CRATE_REST_Y + 0.06){
+        state.attached = false;
+        var placedOk = inZone(state.cratePos.x, state.cratePos.z, ZONE_B);
+        if(placedOk){
+          finishSim(true);
+        } else {
+          toast('Not quite in Zone B. No need to start over \u2014 just attach the hook again right where it is sitting and reposition.', 'warn');
+          state.score = Math.max(0, state.score - 5);
+        }
+      } else {
+        toast('Cannot release mid-air \u2014 lower the load fully to the ground first.', 'danger');
+      }
+    }
+  }
+
+  function approach(cur, target, accel, dt){
+    if(cur < target) return Math.min(target, cur + accel*dt);
+    if(cur > target) return Math.max(target, cur - accel*dt);
+    return cur;
+  }
+
+  function update(dt){
+    if(!state.running || state.finished) return;
+    state.elapsed = (performance.now() - state.startTime) / 1000;
+
+    // ---- movement targets ----
+    var dirX = (keys.right?1:0) - (keys.left?1:0);
+    var dirZ = (keys.back?1:0) - (keys.fwd?1:0);
+    var dirH = (keys.hoistDown?1:0) - (keys.hoistUp?1:0);
+
+    state.gantryVelX = approach(state.gantryVelX, dirX*MOVE_MAX, MOVE_ACCEL, dt);
+    state.trolleyVelZ = approach(state.trolleyVelZ, dirZ*MOVE_MAX, MOVE_ACCEL, dt);
+    state.hoistVel = approach(state.hoistVel, dirH*HOIST_MAX_SPD, HOIST_ACCEL, dt);
+
+    var prevGX = state.gantryX, prevTZ = state.trolleyZ;
+    state.gantryX += state.gantryVelX*dt;
+    state.trolleyZ += state.trolleyVelZ*dt;
+    state.hoistDrop += state.hoistVel*dt;
+
+    var hitLimit = false;
+    if(state.gantryX < GANTRY_X_MIN){ state.gantryX = GANTRY_X_MIN; state.gantryVelX = 0; hitLimit = true; }
+    if(state.gantryX > GANTRY_X_MAX){ state.gantryX = GANTRY_X_MAX; state.gantryVelX = 0; hitLimit = true; }
+    if(state.trolleyZ < TROLLEY_Z_MIN){ state.trolleyZ = TROLLEY_Z_MIN; state.trolleyVelZ = 0; hitLimit = true; }
+    if(state.trolleyZ > TROLLEY_Z_MAX){ state.trolleyZ = TROLLEY_Z_MAX; state.trolleyVelZ = 0; hitLimit = true; }
+    if(state.hoistDrop < HOIST_MIN){ state.hoistDrop = HOIST_MIN; state.hoistVel = 0; }
+    if(state.hoistDrop > HOIST_MAX){ state.hoistDrop = HOIST_MAX; state.hoistVel = 0; }
+
+    if(hitLimit && cooldowns.limit <= 0){
+      toast('Travel limit reached \u2014 the crane cannot move further in that direction.', 'warn');
+      cooldowns.limit = 3;
+    }
+
+    // ---- swing physics ----
+    var accelX = (state.gantryVelX - state.prevGantryVelX)/Math.max(dt,0.0001);
+    var accelZ = (state.trolleyVelZ - state.prevTrolleyVelZ)/Math.max(dt,0.0001);
+    state.prevGantryVelX = state.gantryVelX;
+    state.prevTrolleyVelZ = state.trolleyVelZ;
+
+    if(state.attached){
+      var swAccX = -SWING_STIFF*state.swingX - SWING_DAMP*state.swingVelX - SWING_DRIVE*accelX*0.14;
+      var swAccZ = -SWING_STIFF*state.swingZ - SWING_DAMP*state.swingVelZ - SWING_DRIVE*accelZ*0.14;
+      state.swingVelX += swAccX*dt;
+      state.swingVelZ += swAccZ*dt;
+      state.swingX += state.swingVelX*dt;
+      state.swingZ += state.swingVelZ*dt;
+    } else {
+      state.swingX *= 0.9; state.swingZ *= 0.9;
+      state.swingVelX *= 0.85; state.swingVelZ *= 0.85;
+    }
+    var mag = Math.sqrt(state.swingX*state.swingX + state.swingZ*state.swingZ);
+    if(mag > SWING_MAX){
+      var s = SWING_MAX/mag;
+      state.swingX *= s; state.swingZ *= s;
+    }
+
+    // ---- crate follow ----
+    var hp = hookWorldPos();
+    if(state.attached){
+      var targetX = hp.x + state.swingX;
+      var targetZ = hp.z + state.swingZ;
+      var targetY = Math.max(CRATE_REST_Y, hp.y - HOOK_OFFSET);
+      state.cratePos.set(targetX, targetY, targetZ);
+    }
+
+    // ---- hazard / swing checks ----
+    cooldowns.swing = Math.max(0, cooldowns.swing - dt);
+    cooldowns.hazard = Math.max(0, cooldowns.hazard - dt);
+    cooldowns.limit = Math.max(0, cooldowns.limit - dt);
+
+    if(state.attached && mag > SWING_WARN && cooldowns.swing <= 0){
+      cooldowns.swing = 2.2;
+      state.incidents++;
+      state.score = Math.max(0, state.score - (mag > SWING_DANGER ? 8 : 4));
+      toast(mag > SWING_DANGER ? 'Excessive load swing! Ease off the controls and let it settle.' : 'Load is starting to swing \u2014 move more gradually.', mag > SWING_DANGER ? 'danger' : 'warn');
+    }
+
+    if(state.attached && state.cratePos.y > CRATE_REST_Y + 0.2 && inZone(state.cratePos.x, state.cratePos.z, HAZARD) && cooldowns.hazard <= 0){
+      cooldowns.hazard = 3;
+      state.incidents++;
+      state.score = Math.max(0, state.score - 15);
+      toast('Hazard breach: never carry a suspended load over the marked hazard walkway.', 'danger');
+    }
+
+    // ---- stage text ----
+    if(state.stage === 0 && !state.attached){
+      var d = dist2D(hp.x, hp.z, state.cratePos.x, state.cratePos.z);
+      attachLabel.textContent = 'ATTACH';
+      attachBtn.classList.toggle('ready', d < 1.15 && hp.y < state.cratePos.y + CRATE_H/2 + 1.3);
+    } else if(state.attached){
+      attachLabel.textContent = 'RELEASE';
+      attachBtn.classList.toggle('ready', state.cratePos.y <= CRATE_REST_Y + 0.06);
+    } else {
+      attachLabel.textContent = 'ATTACH';
+      attachBtn.classList.remove('ready');
+    }
+    objectiveText.textContent = currentObjective();
+
+    // ---- render sync ----
+    gantry.position.x = state.gantryX;
+    trolley.position.z = state.trolleyZ;
+    hookGroup.position.set(hp.x, hp.y - HOOK_OFFSET, hp.z);
+    crateGroup.position.copy(state.cratePos);
+    crateGroup.rotation.y += (state.attached ? (state.swingX*0.06) : 0) * dt * 4;
+
+    var cableTop = new THREE.Vector3(hp.x, hp.y, hp.z);
+    var cableBottom = new THREE.Vector3(hookGroup.position.x, hookGroup.position.y + 0.2, hookGroup.position.z);
+    updateCable(cableTop, cableBottom);
+
+    // ---- HUD ----
+    var mm = Math.floor(state.elapsed/60), ss = Math.floor(state.elapsed%60);
+    statTime.textContent = (mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;
+    statScore.textContent = Math.round(state.score);
+    statIncidents.textContent = state.incidents;
+
+    var pct = Math.min(1, mag/SWING_MAX);
+    var offsetPx = (mag>0 ? (state.swingX/SWING_MAX) : 0) * 60;
+    swingFill.style.left = 'calc(50% + '+offsetPx.toFixed(1)+'px)';
+    swingFill.style.width = (4 + pct*10).toFixed(1)+'px';
+    swingFill.style.background = mag > SWING_DANGER ? '#E23B3B' : mag > SWING_WARN ? '#E8590C' : '#2BAE66';
+    swingLabel.textContent = (mag > SWING_DANGER ? 'DANGER' : mag > SWING_WARN ? 'CAUTION' : 'STABLE') + ' \u00b7 ' + mag.toFixed(2);
+  }
+
+  function finishSim(success){
+    state.finished = true;
+    state.running = false;
+    var timeBonus = state.elapsed < 75 ? 10 : 0;
+    if(timeBonus) state.score = Math.min(100, state.score + timeBonus);
+    document.getElementById('endScore').textContent = Math.round(state.score);
+    var mm = Math.floor(state.elapsed/60), ss = Math.floor(state.elapsed%60);
+    document.getElementById('endTime').textContent = (mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;
+    document.getElementById('endIncidents').textContent = state.incidents;
+    document.getElementById('endTitle').textContent = state.incidents === 0 ? 'Clean Lift \u2014 No Incidents' : 'Load Placed \u2014 Review Flags Below';
+    document.getElementById('endEyebrow').textContent = 'Lift Complete';
+    var recap = document.getElementById('endRecap');
+    recap.innerHTML = '';
+    if(state.log.length === 0){
+      var d = document.createElement('div'); d.textContent = 'No safety flags raised during this lift. Well controlled operation.';
+      recap.appendChild(d);
+    } else {
+      state.log.slice(0,6).forEach(function(m){
+        var d = document.createElement('div'); d.textContent = '\u2022 '+m; recap.appendChild(d);
+      });
+    }
+    document.getElementById('endOverlay').style.display = 'flex';
+  }
+
+  function startSim(){
+    state.running = true;
+    state.startTime = performance.now();
+    toast('Before lifting: confirm the load path is clear and the crate is within rated capacity.', null);
+  }
+
+  function resetSim(){
+    state.gantryX = GANTRY_X_MIN + 3; state.gantryVelX = 0;
+    state.trolleyZ = 0; state.trolleyVelZ = 0;
+    state.hoistDrop = HOIST_MIN; state.hoistVel = 0;
+    state.swingX = 0; state.swingZ = 0; state.swingVelX = 0; state.swingVelZ = 0;
+    state.prevGantryVelX = 0; state.prevTrolleyVelZ = 0;
+    state.attached = false;
+    state.cratePos.set(ZONE_A.x, CRATE_REST_Y, ZONE_A.z);
+    state.running = false; state.finished = false;
+    state.score = 100; state.incidents = 0; state.elapsed = 0; state.stage = 0;
+    state.log = [];
+    toastsEl.innerHTML = '';
+    document.getElementById('endOverlay').style.display = 'none';
+  }
+
+  /* ============================================================
+     LOOP
+  ============================================================ */
+  var clock = new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    var dt = Math.min(clock.getDelta(), 0.05);
+    update(dt);
+    renderer.render(scene, camera);
+  }
+
+  document.getElementById('loading').style.display = 'none';
+  animate();
+})();
+</script>
+</body>
+</html>

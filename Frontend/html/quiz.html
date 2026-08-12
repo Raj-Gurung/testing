@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safety & Ethics Quiz — Nexsus Logistics</title>
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  :root {
+    --bg-dark: #12161C;
+    --panel: #171C24;
+    --panel-card: #1C232E;
+    --ink: #EDEFF2;
+    --muted: #98A2B0;
+    --line: #262C36;
+    --accent: #5B9DF9;
+    --accent-soft: rgba(91, 157, 249, 0.12);
+    --success: #2BAE66;
+    --danger: #E8590C;
+    --warning: #F5B700;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* Navbar */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1f1f1f;
+    padding: 15px 40px;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .nav-links li {
+    position: relative;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px 5px;
+    display: block;
+  }
+
+  .nav-links > li > a:hover,
+  .nav-links > li > a.active {
+    color: #ffcc00;
+  }
+
+  /* Dropdown */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #2b2b2b;
+    min-width: 180px;
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  .dropdown-content li {
+    width: 100%;
+  }
+
+  .dropdown-content a {
+    padding: 12px 16px;
+    color: #fff;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #3d3d3d;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .dropdown > a::after {
+    content: " ▾";
+    font-size: 12px;
+  }
+
+  /* Main Quiz Layout */
+  main {
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 40px 20px 80px 20px;
+  }
+
+  .header-box {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 30px;
+  }
+
+  .kicker {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  p.subtitle {
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  /* Requirement Banner */
+  .req-banner {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--warning);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .req-banner .icon {
+    font-size: 22px;
+  }
+
+  .req-banner text {
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  /* Quiz Container */
+  .quiz-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Progress Bar */
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  /* Question Block */
+  .q-block {
+    margin-bottom: 32px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .q-block:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .q-title {
+    font-size: 16.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .q-num {
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* MCQ Options */
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-item {
+    display: flex;
+    align-items: center;
+    background: var(--panel-card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+
+  .option-item:hover {
+    border-color: var(--accent);
+    background: rgba(91, 157, 249, 0.05);
+  }
+
+  .option-item input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--muted);
+    border-radius: 50%;
+    margin-right: 12px;
+    outline: none;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .option-item input[type="radio"]:checked {
+    border-color: var(--accent);
+    background-color: var(--accent);
+    box-shadow: inset 0 0 0 3px var(--panel-card);
+  }
+
+  .option-item label {
+    font-size: 14.5px;
+    color: var(--ink);
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .option-item.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  /* Submit Button */
+  .btn-submit {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #0B1220;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+
+  .btn-submit:hover {
+    background: #79AEFA;
+    transform: translateY(-1px);
+  }
+
+  /* Results Screen */
+  .results-box {
+    display: none;
+    text-align: center;
+    padding: 36px 20px;
+  }
+
+  .score-badge {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+    font-size: 32px;
+    font-weight: 800;
+    border: 4px solid var(--line);
+  }
+
+  .score-badge.passed {
+    border-color: var(--success);
+    background: rgba(43, 174, 102, 0.12);
+    color: var(--success);
+  }
+
+  .score-badge.failed {
+    border-color: var(--danger);
+    background: rgba(232, 89, 12, 0.12);
+    color: var(--danger);
+  }
+
+  .results-box h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .results-box p {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 540px;
+    margin: 0 auto 28px auto;
+  }
+
+  .sim-launch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 600px) {
+    .sim-launch-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .sim-card-btn {
+    background: var(--panel-card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: left;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .sim-card-btn:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .sim-card-btn h3 {
+    font-size: 17px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .sim-card-btn p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    text-align: left;
+  }
+
+  .btn-action {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0B1220;
+  }
+
+  .btn-secondary {
+    background: #253142;
+    color: var(--ink);
+    border: 1px solid #38485E;
+  }
+
+  .answers-review {
+    margin-top: 36px;
+    text-align: left;
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+
+  .answers-review h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .review-item {
+    background: var(--panel-card);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    border-left: 4px solid var(--line);
+  }
+
+  .review-item.correct {
+    border-left-color: var(--success);
+  }
+
+  .review-item.incorrect {
+    border-left-color: var(--danger);
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="./home.html" class="logo-container">
+    <div class="logo">
+      <img src="../img/nexsus_logo.png" alt="Logo" onerror="this.src='./img/nexsus_logo.png'; this.onerror=null;">
+    </div>
+    <div class="brand-title">
+      Nexsus Logistics
+      <span>Warehousing &amp; Safety</span>
+    </div>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="./home.html">Home</a></li>
+    <li><a href="./about.html">About</a></li>
+    <li><a href="./guidelines.html">Guidelines</a></li>
+    <li><a href="./quiz.html" class="active">Quiz</a></li>
+    <li class="dropdown">
+      <a href="#training">Training</a>
+      <ul class="dropdown-content">
+        <li><a href="./crane.html">Crane Operator</a></li>
+        <li><a href="./forklift.html">Forklift Training</a></li>
+      </ul>
+    </li>
+    <li><a href="./contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="header-box">
+    <div class="kicker">Mandatory Knowledge Assessment</div>
+    <h1>Workplace Safety &amp; Ethics Quiz</h1>
+    <p class="subtitle">Demonstrate your understanding of warehouse equipment operation, workplace ethics, and hazard protocols.</p>
+  </div>
+
+  <div class="req-banner">
+    <div class="icon">⚠️</div>
+    <div class="text">
+      <strong>Prerequisite Requirement:</strong> You must score <strong>more than 60%</strong> (at least 7 out of 10 correct) to unlock access to the Crane and Forklift 3D Training Simulators.
+    </div>
+  </div>
+
+  <!-- Quiz Form -->
+  <div id="quiz-form-container" class="quiz-card">
+    <div class="progress-header">
+      <span>Assessment Progress</span>
+      <span id="progress-text">0 / 10 Answered</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div id="progress-fill" class="progress-bar-fill"></div>
+    </div>
+
+    <form id="quiz-form">
+      <!-- Q1 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q1.</span>
+          <span>What is the primary operational cause of suspended load swing during overhead gantry crane operation?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q1" value="A" id="q1a"><label for="q1a">Abrupt starts, sudden stops, and sharp direction changes</label></div>
+          <div class="option-item"><input type="radio" name="q1" value="B" id="q1b"><label for="q1b">Operating the trolley at a slow, continuous speed</label></div>
+          <div class="option-item"><input type="radio" name="q1" value="C" id="q1c"><label for="q1c">Keeping the crane hook fully stationary before moving</label></div>
+          <div class="option-item"><input type="radio" name="q1" value="D" id="q1d"><label for="q1d">Lifting the crate close to the concrete floor</label></div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q2.</span>
+          <span>When transporting a load using the overhead crane, how must you handle a striped pedestrian hazard zone?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q2" value="A" id="q2a"><label for="q2a">Lower the load to 1 meter and move quickly across the walkway</label></div>
+          <div class="option-item"><input type="radio" name="q2" value="B" id="q2b"><label for="q2b">Route the trolley entirely clear of the hazard zone—suspended loads must never pass over it</label></div>
+          <div class="option-item"><input type="radio" name="q2" value="C" id="q2c"><label for="q2c">Sound the horn continuously while driving over pedestrians</label></div>
+          <div class="option-item"><input type="radio" name="q2" value="D" id="q2d"><label for="q2d">Release the hook mid-air and let workers guide the box</label></div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q3.</span>
+          <span>Which of the following is MANDATORY during the pre-operation walk-around check before turning on a forklift?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q3" value="A" id="q3a"><label for="q3a">Adjust the radio volume to maximum</label></div>
+          <div class="option-item"><input type="radio" name="q3" value="B" id="q3b"><label for="q3b">Inspect tyres, forks, mast, horn, seatbelt, and check for fluid leaks</label></div>
+          <div class="option-item"><input type="radio" name="q3" value="C" id="q3c"><label for="q3c">Drive 50 meters in reverse to warm up the engine</label></div>
+          <div class="option-item"><input type="radio" name="q3" value="D" id="q3d"><label for="q3d">Ensure the mast is fully elevated at maximum height</label></div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q4.</span>
+          <span>What occurs in the forklift simulator if you try to drive without fastening your seatbelt?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q4" value="A" id="q4a"><label for="q4a">The forklift will overheat immediately</label></div>
+          <div class="option-item"><input type="radio" name="q4" value="B" id="q4b"><label for="q4b">The engine safety interlock prevents acceleration and keeps the vehicle stationary</label></div>
+          <div class="option-item"><input type="radio" name="q4" value="C" id="q4c"><label for="q4c">The horn sounds continuously without stopping</label></div>
+          <div class="option-item"><input type="radio" name="q4" value="D" id="q4d"><label for="q4d">The vehicle automatically doubles its top speed</label></div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q5.</span>
+          <span>What is the required safety procedure when driving a forklift near a blind intersection or aisle corner?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q5" value="A" id="q5a"><label for="q5a">Accelerate to pass through the intersection as quickly as possible</label></div>
+          <div class="option-item"><input type="radio" name="q5" value="B" id="q5b"><label for="q5b">Turn off headlights and coast silently</label></div>
+          <div class="option-item"><input type="radio" name="q5" value="C" id="q5c"><label for="q5c">Slow down, keep load low, check blind spots, and sound the horn to alert pedestrians</label></div>
+          <div class="option-item"><input type="radio" name="q5" value="D" id="q5d"><label for="q5d">Drive in reverse while looking forward</label></div>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q6.</span>
+          <span>You witness a teammate accidentally scrape a storage rack with a forklift. What is the ethically required response?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q6" value="A" id="q6a"><label for="q6a">Ignore it since the rack didn't collapse and nobody was hurt</label></div>
+          <div class="option-item"><input type="radio" name="q6" value="B" id="q6b"><label for="q6b">Report the incident promptly to a supervisor so the rack structure can be safety-inspected</label></div>
+          <div class="option-item"><input type="radio" name="q6" value="C" id="q6c"><label for="q6c">Spray paint over the scratch to conceal it</label></div>
+          <div class="option-item"><input type="radio" name="q6" value="D" id="q6d"><label for="q6d">Wait until your annual review to mention it</label></div>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q7.</span>
+          <span>What is Nexsus Logistics' workplace ethics policy regarding operating warehouse machinery under impairment?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q7" value="A" id="q7a"><label for="q7a">Allowed if you drink a cup of strong coffee before operating</label></div>
+          <div class="option-item"><input type="radio" name="q7" value="B" id="q7b"><label for="q7b">Zero tolerance policy; working under alcohol, drugs, or impairing medication is strictly prohibited</label></div>
+          <div class="option-item"><input type="radio" name="q7" value="C" id="q7c"><label for="q7c">Permitted if you drive at half speed</label></div>
+          <div class="option-item"><input type="radio" name="q7" value="D" id="q7d"><label for="q7d">Permitted during weekend shifts only</label></div>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q8.</span>
+          <span>What is the correct ergonomic procedure for manually lifting a heavy package from the ground?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q8" value="A" id="q8a"><label for="q8a">Keep knees straight, bend your back, and lift using your spine</label></div>
+          <div class="option-item"><input type="radio" name="q8" value="B" id="q8b"><label for="q8b">Bend at knees and hips, hold load close to chest, and push up with your legs without twisting</label></div>
+          <div class="option-item"><input type="radio" name="q8" value="C" id="q8c"><label for="q8c">Twist your torso rapidly to swing the box onto a high shelf</label></div>
+          <div class="option-item"><input type="radio" name="q8" value="D" id="q8d"><label for="q8d">Lift with one hand while stretching your neck backward</label></div>
+        </div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q9.</span>
+          <span>If you discover an unknown chemical liquid puddle leaking onto a walkway, what is your FIRST action?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q9" value="A" id="q9a"><label for="q9a">Mop it up using your personal high-visibility vest</label></div>
+          <div class="option-item"><input type="radio" name="q9" value="B" id="q9b"><label for="q9b">Isolate the area, set warning cones, avoid contact, and notify the hazmat safety team</label></div>
+          <div class="option-item"><input type="radio" name="q9" value="C" id="q9c"><label for="q9c">Touch the liquid to check its viscosity</label></div>
+          <div class="option-item"><input type="radio" name="q9" value="D" id="q9d"><label for="q9d">Sweep the liquid into the nearest storm drain</label></div>
+        </div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-block">
+        <div class="q-title">
+          <span class="q-num">Q10.</span>
+          <span>What must be performed before carrying out maintenance or clearing a jam on warehouse machinery?</span>
+        </div>
+        <div class="options-list">
+          <div class="option-item"><input type="radio" name="q10" value="A" id="q10a"><label for="q10a">De-energize the equipment, apply Lockout/Tagout (LOTO) locks, and verify zero energy</label></div>
+          <div class="option-item"><input type="radio" name="q10" value="B" id="q10b"><label for="q10b">Keep power connected so moving parts can be cleared while running</label></div>
+          <div class="option-item"><input type="radio" name="q10" value="C" id="q10c"><label for="q10c">Ask a coworker to hold down the green start button</label></div>
+          <div class="option-item"><input type="radio" name="q10" value="D" id="q10d"><label for="q10d">Place a paper note on the engine saying 'Be back soon'</label></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">Submit Quiz &amp; Grade Answers</button>
+    </form>
+  </div>
+
+  <!-- Results Screen Container -->
+  <div id="quiz-results-container" class="quiz-card results-box">
+    <div id="score-badge" class="score-badge">
+      <span id="score-val">0%</span>
+    </div>
+    <h2 id="result-title">Quiz Evaluation Complete</h2>
+    <p id="result-desc">Your results have been processed according to Nexsus Safety Standards.</p>
+
+    <!-- Sim Launch Buttons (Shown if >60%) -->
+    <div id="sim-launch-section" style="display:none;">
+      <div class="sim-launch-grid">
+        <a href="./crane.html" class="sim-card-btn">
+          <div>
+            <h3>🏗️ Overhead Crane Simulator</h3>
+            <p>Practice precision hoisting, gantry alignment, and hazard avoidance in 3D.</p>
+          </div>
+          <span class="btn-action btn-primary">Launch Crane Sim &rarr;</span>
+        </a>
+        <a href="./forklift.html" class="sim-card-btn">
+          <div>
+            <h3>🚜 Forklift Operator Simulator</h3>
+            <p>Walk through pre-op checks, seatbelt interlocks, and cargo transport in 3D.</p>
+          </div>
+          <span class="btn-action btn-primary">Launch Forklift Sim &rarr;</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Action Buttons (Shown if <=60%) -->
+    <div id="retry-section" style="display:none; margin-top:20px; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <a href="./guidelines.html" class="btn-action btn-primary">Review Safety Guidelines</a>
+      <button type="button" id="btn-retake" class="btn-action btn-secondary">Retake Quiz</button>
+    </div>
+
+    <!-- Answers Breakdown -->
+    <div class="answers-review">
+      <h3>Detailed Question Breakdown</h3>
+      <div id="breakdown-list"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 Nexsus Logistics and Warehousing Company &middot; Joint Venture Training Programme
+</footer>
+
+<script src="../javascript/main.js"></script>
+<script>
+  (function() {
+    const ANSWER_KEY = {
+      q1: 'A',
+      q2: 'B',
+      q3: 'B',
+      q4: 'B',
+      q5: 'C',
+      q6: 'B',
+      q7: 'B',
+      q8: 'B',
+      q9: 'B',
+      q10: 'A'
+    };
+
+    const QUESTIONS_TEXT = {
+      q1: 'Crane Load Swing Cause',
+      q2: 'Pedestrian Hazard Zone Routing',
+      q3: 'Forklift Pre-Op Checklist Requirement',
+      q4: 'Seatbelt Safety Interlock',
+      q5: 'Blind Corner Navigation Procedure',
+      q6: 'Rack Contact & Incident Reporting Ethics',
+      q7: 'Workplace Impairment & Substance Policy',
+      q8: 'Manual Heavy Lifting Ergonomics',
+      q9: 'Chemical Spill Isolation & Response',
+      q10: 'Lockout/Tagout (LOTO) Protocol'
+    };
+
+    const form = document.getElementById('quiz-form');
+    const formContainer = document.getElementById('quiz-form-container');
+    const resultsContainer = document.getElementById('quiz-results-container');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const scoreVal = document.getElementById('score-val');
+    const scoreBadge = document.getElementById('score-badge');
+    const resultTitle = document.getElementById('result-title');
+    const resultDesc = document.getElementById('result-desc');
+    const simLaunchSection = document.getElementById('sim-launch-section');
+    const retrySection = document.getElementById('retry-section');
+    const breakdownList = document.getElementById('breakdown-list');
+    const btnRetake = document.getElementById('btn-retake');
+
+    // Update Progress Bar
+    function updateProgress() {
+      const inputs = form.querySelectorAll('input[type="radio"]:checked');
+      const count = inputs.length;
+      const pct = (count / 10) * 100;
+      progressFill.style.width = pct + '%';
+      progressText.textContent = `${count} / 10 Answered`;
+
+      // Highlight selected radio items
+      document.querySelectorAll('.option-item').forEach(item => {
+        const radio = item.querySelector('input[type="radio"]');
+        if (radio && radio.checked) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+    }
+
+    form.addEventListener('change', updateProgress);
+
+    // Option Item Click Event Handler
+    document.querySelectorAll('.option-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        const radio = this.querySelector('input[type="radio"]');
+        if (radio && e.target !== radio) {
+          radio.checked = true;
+          updateProgress();
+        }
+      });
+    });
+
+    // Form Submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      let correctCount = 0;
+      const breakdown = [];
+
+      for (let i = 1; i <= 10; i++) {
+        const qKey = 'q' + i;
+        const selectedRadio = form.querySelector(`input[name="${qKey}"]:checked`);
+        const userVal = selectedRadio ? selectedRadio.value : null;
+        const correctVal = ANSWER_KEY[qKey];
+        const isCorrect = userVal === correctVal;
+
+        if (isCorrect) correctCount++;
+
+        breakdown.push({
+          num: i,
+          title: QUESTIONS_TEXT[qKey],
+          isCorrect: isCorrect,
+          userVal: userVal || 'Not Answered',
+          correctVal: correctVal
+        });
+      }
+
+      const scorePercent = (correctCount / 10) * 100;
+      const passed = scorePercent > 60; // strictly >60%
+
+      // Save state to localStorage via NexsusState
+      if (window.NexsusState) {
+        window.NexsusState.saveQuizResult(scorePercent);
+      }
+
+      // Hide form, show results
+      formContainer.style.display = 'none';
+      resultsContainer.style.display = 'block';
+
+      // Set score badge
+      scoreVal.textContent = Math.round(scorePercent) + '%';
+      scoreBadge.className = 'score-badge ' + (passed ? 'passed' : 'failed');
+
+      if (passed) {
+        resultTitle.textContent = '🎉 Congratulations! Quiz Passed';
+        resultDesc.textContent = `You scored ${scorePercent}% (Required: >60%). You have successfully unlocked full access to our interactive 3D Crane and Forklift simulators!`;
+        simLaunchSection.style.display = 'block';
+        retrySection.style.display = 'none';
+      } else {
+        resultTitle.textContent = '❌ Assessment Not Passed';
+        resultDesc.textContent = `You scored ${scorePercent}%. A score of MORE THAN 60% is required to access the 3D simulators. Please review the safety guidelines and retake the quiz.`;
+        simLaunchSection.style.display = 'none';
+        retrySection.style.display = 'flex';
+      }
+
+      // Build Breakdown List
+      breakdownList.innerHTML = '';
+      breakdown.forEach(item => {
+        const div = document.createElement('div');
+        div.className = `review-item ${item.isCorrect ? 'correct' : 'incorrect'}`;
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <strong>Q${item.num}: ${item.title}</strong>
+            <span style="font-weight:bold; color:${item.isCorrect ? '#2BAE66' : '#E8590C'};">
+              ${item.isCorrect ? '✓ Correct' : '✕ Incorrect'}
+            </span>
+          </div>
+          <div style="font-size:13px; color:#98A2B0;">
+            Your Answer: <strong>${item.userVal}</strong> ${!item.isCorrect ? `| Correct Answer: <strong style="color:#5B9DF9;">${item.correctVal}</strong>` : ''}
+          </div>
+        `;
+        breakdownList.appendChild(div);
+      });
+
+      // Scroll to top of results
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Retake Quiz
+    btnRetake?.addEventListener('click', function() {
+      form.reset();
+      updateProgress();
+      resultsContainer.style.display = 'none';
+      formContainer.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Check if previously taken
+    if (window.NexsusState) {
+      const prevScore = window.NexsusState.getQuizScore();
+      if (prevScore !== null) {
+        // Option to display existing score banner or start fresh
+      }
+    }
+  })();
+</script>
+</body>
+</html>
