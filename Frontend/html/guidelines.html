@@ -366,10 +366,18 @@
 
 <script src="./javascript/main.js"></script>
 <script>
-  document.getElementById('btn-proceed-quiz')?.addEventListener('click', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     if (window.NexsusState) {
       window.NexsusState.markGuidelinesRead();
     }
+  });
+
+  document.querySelectorAll('#btn-proceed-quiz, a[href*="crane.html"], a[href*="forklift.html"], a[href*="quiz.html"]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (window.NexsusState) {
+        window.NexsusState.markGuidelinesRead();
+      }
+    });
   });
 </script>
 </body>

@@ -21,6 +21,7 @@
 
     markGuidelinesRead: function () {
       localStorage.setItem(STORAGE_KEYS.GUIDELINES_READ, 'true');
+      this.updateNavbarAccess();
     },
 
     getQuizScore: function () {
@@ -34,10 +35,15 @@
       return passed && score !== null && score > 60;
     },
 
+    canAccessSimulators: function () {
+      return this.isGuidelinesRead() && this.isQuizPassed();
+    },
+
     saveQuizResult: function (scorePercent) {
       const passed = scorePercent > 60;
       localStorage.setItem(STORAGE_KEYS.QUIZ_SCORE, scorePercent.toFixed(1));
       localStorage.setItem(STORAGE_KEYS.QUIZ_PASSED, passed ? 'true' : 'false');
+      this.updateNavbarAccess();
       return passed;
     },
 
@@ -45,6 +51,11 @@
       localStorage.removeItem(STORAGE_KEYS.GUIDELINES_READ);
       localStorage.removeItem(STORAGE_KEYS.QUIZ_PASSED);
       localStorage.removeItem(STORAGE_KEYS.QUIZ_SCORE);
+      this.updateNavbarAccess();
+    },
+
+    updateNavbarAccess: function () {
+      updateNavbarAccess();
     }
   };
 
@@ -203,6 +214,11 @@
 
   // Show Lock Warning Modal
   function showLockModal(e) {
+    // If simulator access is unlocked, do NOT intercept click or block navigation!
+    if (window.NexsusState.canAccessSimulators()) {
+      return;
+    }
+
     if (e) e.preventDefault();
 
     const existingModal = document.getElementById('nexsus-lock-modal');
@@ -259,13 +275,21 @@
     });
   }
 
+  function handleDropdownLock(e) {
+    if (window.NexsusState.canAccessSimulators()) return;
+    if (this.getAttribute('href') === '#training' || this.getAttribute('href') === '#') {
+      e.preventDefault();
+      showLockModal(e);
+    }
+  }
+
   // Update Navbar Links according to Access State
   function updateNavbarAccess() {
-    const isPassed = window.NexsusState.isQuizPassed();
+    const canAccess = window.NexsusState.canAccessSimulators();
     const trainingLinks = document.querySelectorAll('a[href*="crane.html"], a[href*="forklift.html"]');
 
     trainingLinks.forEach(link => {
-      if (!isPassed) {
+      if (!canAccess) {
         link.classList.add('locked-nav-item');
         link.title = 'Access Locked - Complete Guidelines & Pass Quiz (>60%)';
         link.addEventListener('click', showLockModal);
@@ -278,13 +302,12 @@
 
     // Handle dropdown main trigger if clicked
     const dropdownTrigger = document.querySelector('.dropdown > a');
-    if (dropdownTrigger && !isPassed) {
-      dropdownTrigger.addEventListener('click', function (e) {
-        if (this.getAttribute('href') === '#training' || this.getAttribute('href') === '#') {
-          e.preventDefault();
-          showLockModal(e);
-        }
-      });
+    if (dropdownTrigger) {
+      if (!canAccess) {
+        dropdownTrigger.addEventListener('click', handleDropdownLock);
+      } else {
+        dropdownTrigger.removeEventListener('click', handleDropdownLock);
+      }
     }
   }
 
@@ -295,8 +318,8 @@
 
     if (!isSimulatorPage) return;
 
-    const isPassed = window.NexsusState.isQuizPassed();
-    if (!isPassed) {
+    const canAccess = window.NexsusState.canAccessSimulators();
+    if (!canAccess) {
       // Block page interaction immediately
       const score = window.NexsusState.getQuizScore();
       const isRead = window.NexsusState.isGuidelinesRead();

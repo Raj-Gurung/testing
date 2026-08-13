@@ -413,7 +413,7 @@
 
     const isRead = window.NexsusState.isGuidelinesRead();
     const score = window.NexsusState.getQuizScore();
-    const isPassed = window.NexsusState.isQuizPassed();
+    const canAccess = window.NexsusState.canAccessSimulators();
 
     const elRead = document.getElementById('status-guidelines');
     const elScore = document.getElementById('status-score');
@@ -431,7 +431,7 @@
       elScore.className = 'status-val ' + (score > 60 ? 'success' : 'pending');
     }
 
-    if (isPassed) {
+    if (canAccess) {
       elAccess.textContent = '✓ Unlocked';
       elAccess.className = 'status-val success';
       if (elIcon) elIcon.textContent = '🔓';
