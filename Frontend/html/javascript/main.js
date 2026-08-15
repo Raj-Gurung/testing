@@ -44,8 +44,58 @@
       localStorage.setItem(STORAGE_KEYS.QUIZ_SCORE, scorePercent.toFixed(1));
       localStorage.setItem(STORAGE_KEYS.QUIZ_PASSED, passed ? 'true' : 'false');
       this.updateNavbarAccess();
+      this.postQuizResultToBackend(scorePercent);
       return passed;
     },
+
+    postQuizResultToBackend: function (scorePercent) {
+      function getCsrfToken() {
+        const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfInput && csrfInput.value) return csrfInput.value;
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+              cookieValue = decodeURIComponent(cookie.substring(10));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      const csrftoken = getCsrfToken();
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (csrftoken) {
+        headers['X-CSRFToken'] = csrftoken;
+      }
+
+      fetch('/api/quiz/submit/', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ score_percent: scorePercent })
+      })
+      .then(function(response) {
+        if (!response.ok) {
+          console.warn('Backend quiz submit returned status:', response.status);
+        } else {
+          return response.json();
+        }
+      })
+      .then(function(data) {
+        if (data) {
+          console.log('Quiz result saved to database:', data);
+        }
+      })
+      .catch(function(err) {
+        console.warn('Unable to persist quiz result to backend API:', err);
+      });
+    },
+
 
     resetProgress: function () {
       localStorage.removeItem(STORAGE_KEYS.GUIDELINES_READ);
