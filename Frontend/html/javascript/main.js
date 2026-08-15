@@ -257,8 +257,8 @@
           ${statusHtml}
         </div>
         <div class="nexsus-btn-group">
-          <a href="./guidelines.html" class="nexsus-btn nexsus-btn-primary">Read Guidelines</a>
-          <a href="./quiz.html" class="nexsus-btn nexsus-btn-secondary">Take Quiz</a>
+          <a href="/guidelines/" class="nexsus-btn nexsus-btn-primary">Read Guidelines</a>
+          <a href="/quiz/" class="nexsus-btn nexsus-btn-secondary">Take Quiz</a>
           <button type="button" class="nexsus-btn nexsus-btn-cancel" id="nexsus-close-modal">Close</button>
         </div>
       </div>
@@ -286,7 +286,7 @@
   // Update Navbar Links according to Access State
   function updateNavbarAccess() {
     const canAccess = window.NexsusState.canAccessSimulators();
-    const trainingLinks = document.querySelectorAll('a[href*="crane.html"], a[href*="forklift.html"]');
+    const trainingLinks = document.querySelectorAll('a[href*="crane"], a[href*="forklift"]');
 
     trainingLinks.forEach(link => {
       if (!canAccess) {
@@ -314,7 +314,7 @@
   // Check Direct Simulator Page Access (For crane.html & forklift.html)
   function checkSimulatorAccess() {
     const currentPath = window.location.pathname.toLowerCase();
-    const isSimulatorPage = currentPath.endsWith('crane.html') || currentPath.endsWith('forklift.html');
+    const isSimulatorPage = currentPath.includes('/crane') || currentPath.includes('/forklift');
 
     if (!isSimulatorPage) return;
 
@@ -349,9 +349,9 @@
             </div>
           </div>
           <div class="nexsus-btn-group">
-            <a href="./guidelines.html" class="nexsus-btn nexsus-btn-primary">1. Read Guidelines</a>
-            <a href="./quiz.html" class="nexsus-btn nexsus-btn-secondary">2. Take Safety Quiz</a>
-            <a href="./home.html" class="nexsus-btn nexsus-btn-cancel">Return Home</a>
+            <a href="/guidelines/" class="nexsus-btn nexsus-btn-primary">1. Read Guidelines</a>
+            <a href="/quiz/" class="nexsus-btn nexsus-btn-secondary">2. Take Safety Quiz</a>
+            <a href="/home/" class="nexsus-btn nexsus-btn-cancel">Return Home</a>
           </div>
         </div>
       `;

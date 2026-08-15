@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Nexsus Logistics</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#101A2B;
+    --navy-2:#16223A;
+    --concrete:#ECE9E1;
+    --concrete-2:#DDD8CC;
+    --orange:#E15B0F;
+    --steel:#4A6274;
+    --line-dark: rgba(236,233,225,0.14);
+    --line-light: rgba(16,26,43,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--concrete);
+    color:var(--navy);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Big Shoulders Display', sans-serif;
+    text-transform:uppercase;
+    line-height:0.94;
+    letter-spacing:0.01em;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{content:""; width:22px; height:2px; background:var(--orange); display:inline-block;}
+  section{padding:clamp(60px,8vw,110px) clamp(24px,6vw,96px); max-width:1280px; margin:0 auto;}
+
+  .hero{
+    background:var(--navy);
+    color:var(--concrete);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1.2fr 0.8fr;
+    gap:32px;
+    align-items:end;
+    max-width:1280px;
+    margin:0 auto;
+    padding:clamp(36px,4vw,56px) clamp(24px,6vw,96px) 36px;
+    position:relative;
+    z-index:2;
+  }
+  .hero h1{
+    font-size:clamp(32px,4.2vw,54px);
+    font-weight:900;
+  }
+  .hero h1 span{color:var(--orange);}
+  .hero p{
+    color:#B9C0CA;
+    font-size:15.5px;
+    max-width:44ch;
+    margin-top:12px;
+  }
+  .hero-stats{
+    display:grid;
+    gap:14px;
+  }
+  .hero-stats div{border-left:2px solid var(--orange); padding-left:14px;}
+  .hero-stats .n{
+    font-family:'Big Shoulders Display', sans-serif;
+    font-weight:700;
+    font-size:26px;
+    color:var(--concrete);
+    line-height:1;
+  }
+  .hero-stats .l{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#8FA0AF;
+    margin-top:3px;
+  }
+
+  .lane{
+    position:relative;
+    z-index:2;
+    padding:0 clamp(24px,6vw,96px) 28px;
+    max-width:1280px;
+    margin:0 auto;
+  }
+  .lane svg{width:100%; height:auto; max-height:44px; display:block;}
+  .lane-labels{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    margin-top:8px;
+  }
+  .lane-labels span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:#8FA0AF;
+  }
+  .lane-labels span:nth-child(1){text-align:left;}
+  .lane-labels span:nth-child(2){text-align:center;}
+  .lane-labels span:nth-child(3){text-align:center;}
+  .lane-labels span:nth-child(4){text-align:right;}
+
+  .overview{
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    gap:56px;
+    border-bottom:1px solid var(--line-light);
+  }
+  .overview h2{font-size:clamp(32px,4vw,50px);}
+  .overview .lede{font-size:19px;}
+  .overview .lede + p{margin-top:16px; color:#3B4A5C; font-size:15.5px;}
+
+  .services{border-bottom:1px solid var(--line-light);}
+  .services-head{margin-bottom:44px;}
+  .services-head h2{font-size:clamp(32px,4vw,50px);}
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--line-light);
+    border:1px solid var(--line-light);
+  }
+  .card{
+    background:var(--concrete);
+    padding:32px 26px;
+    min-height:210px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .card .num{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--orange);}
+  .card h3{font-size:28px; margin:16px 0 10px; text-transform:none; font-weight:700;}
+  .card p{color:#3B4A5C; font-size:14.5px;}
+
+  .values{background:var(--navy); color:var(--concrete); border-bottom:1px solid var(--line-dark);}
+  .values-head{margin-bottom:44px;}
+  .values-head h2{font-size:clamp(32px,4vw,50px);}
+  .values-head .eyebrow{color:var(--orange);}
+  .value-list{display:grid; gap:0;}
+  .value-row{
+    display:grid;
+    grid-template-columns:120px 1fr 1.4fr;
+    gap:24px;
+    padding:26px 0;
+    border-top:1px solid var(--line-dark);
+    align-items:baseline;
+  }
+  .value-row:last-child{border-bottom:1px solid var(--line-dark);}
+  .value-row .vnum{font-family:'IBM Plex Mono', monospace; color:#8FA0AF; font-size:13px;}
+  .value-row h3{font-size:26px; text-transform:none; font-weight:700;}
+  .value-row p{color:#B9C0CA; font-size:15px;}
+
+  .closing{
+    display:grid;
+    grid-template-columns:1.2fr 0.8fr;
+    gap:56px;
+    align-items:center;
+  }
+  .closing h2{font-size:clamp(36px,5vw,58px);}
+  .closing p{color:#3B4A5C; font-size:16px; margin-top:14px; max-width:46ch;}
+  .info-box{
+    border:1px solid var(--line-light);
+    padding:26px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--steel);
+  }
+  .info-box strong{
+    display:block;
+    font-family:'Inter', sans-serif;
+    color:var(--navy);
+    font-size:16px;
+    margin-bottom:10px;
+    font-weight:600;
+  }
+  .info-box .row{display:flex; justify-content:space-between; padding:8px 0; border-top:1px solid var(--line-light);}
+  .info-box .row:first-of-type{border-top:none;}
+
+  footer{
+    padding:26px clamp(24px,6vw,96px);
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--steel);
+  }
+
+  @media (max-width:860px){
+    .hero-inner, .overview, .closing{grid-template-columns:1fr;}
+    .card-grid{grid-template-columns:1fr;}
+    .value-row{grid-template-columns:1fr; gap:6px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/home/" class="logo-container">
+    <div class="logo">
+      <img src="/static/img/nexsus_logo.png" alt="Logo" onerror="this.src='/static/img/nexsus_logo.png'; this.onerror=null;">
+    </div>
+    <div class="brand-title">
+      Nexsus Logistics
+      <span>Warehousing &amp; Safety</span>
+    </div>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="/home/">Home</a></li>
+    <li><a href="/about/" class="active">About</a></li>
+    <li><a href="/guidelines/">Guidelines</a></li>
+    <li><a href="/quiz/">Quiz</a></li>
+    <li class="dropdown">
+      <a href="#training">Training</a>
+      <ul class="dropdown-content">
+        <li><a href="/crane/">Crane Operator</a></li>
+        <li><a href="/forklift/">Forklift Training</a></li>
+      </ul>
+    </li>
+    <li><a href="/contact/">Contact</a></li>
+
+    {% if request.user.is_authenticated %}
+      {% if request.user.profile.role == 'admin' %}
+        <li><a href="/admin-dashboard/" style="color: var(--yellow);">Admin Dashboard</a></li>
+      {% endif %}
+      <li><a href="/logout/" style="color: #E8590C; font-weight: 600;">Logout ({{ request.user.username }})</a></li>
+    {% else %}
+      <li><a href="/login/">Login</a></li>
+      <li><a href="/signup/">Sign Up</a></li>
+    {% endif %}
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">About Nexsus Logistics</div>
+      <h1>We move the parts that <span>build the cars.</span></h1>
+      <p>Nexsus Logistics runs warehousing, sequencing and freight distribution for automotive manufacturers and their suppliers across the region — keeping production lines fed, on time, every time.</p>
+    </div>
+    <div class="hero-stats">
+      <div><div class="n">1998</div><div class="l">Founded in Wearside</div></div>
+      <div><div class="n">340+</div><div class="l">People across 3 sites</div></div>
+      <div><div class="n">12</div><div class="l">Automotive clients served</div></div>
+    </div>
+  </div>
+  <div class="lane">
+    <svg viewBox="0 0 1200 90" preserveAspectRatio="none">
+      <line x1="20" y1="45" x2="1180" y2="45" stroke="#2A3B52" stroke-width="2"/>
+      <line x1="20" y1="45" x2="1180" y2="45" stroke="#E15B0F" stroke-width="2" stroke-dasharray="2 14"/>
+      <circle cx="20" cy="45" r="7" fill="#ECE9E1"/>
+      <circle cx="420" cy="45" r="7" fill="#ECE9E1"/>
+      <circle cx="800" cy="45" r="7" fill="#ECE9E1"/>
+      <circle cx="1180" cy="45" r="9" fill="#E15B0F"/>
+    </svg>
+    <div class="lane-labels">
+      <span>Supplier</span>
+      <span>Warehouse</span>
+      <span>Sequencing</span>
+      <span>Assembly Line</span>
+    </div>
+  </div>
+</section>
+
+<section class="overview">
+  <div>
+    <div class="eyebrow">Who We Are</div>
+    <h2>Built around the production line</h2>
+  </div>
+  <div>
+    <p class="lede">We started as a two-warehouse operation supporting a single parts supplier. Today, Nexsus runs just-in-time delivery, storage and sequencing for a dozen automotive manufacturers and tier-one suppliers, moving components on schedules measured in minutes, not days.</p>
+    <p>Automotive lines don't stop for logistics problems — so we've built our business around not being one. That means precise inventory tracking, sequenced loading, and a workforce trained to spot and stop hazards before they become downtime.</p>
+  </div>
+</section>
+
+<section class="services">
+  <div class="services-head">
+    <div class="eyebrow">What We Do</div>
+    <h2>Three ways we keep production moving</h2>
+  </div>
+  <div class="card-grid">
+    <div class="card">
+      <span class="num">01</span>
+      <div>
+        <h3>Warehousing &amp; Storage</h3>
+        <p>Climate-controlled and high-bay storage sited close to major automotive plants, with inventory accuracy built into every pick and put-away.</p>
+      </div>
+    </div>
+    <div class="card">
+      <span class="num">02</span>
+      <div>
+        <h3>JIT Sequencing</h3>
+        <p>Parts arrive at the line in build order, not just on time — cutting the handling and searching that slows assembly down.</p>
+      </div>
+    </div>
+    <div class="card">
+      <span class="num">03</span>
+      <div>
+        <h3>Freight Distribution</h3>
+        <p>A dedicated fleet and trusted haulage partners connecting suppliers, our sites, and client plants on tight, repeatable schedules.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="values">
+  <div class="values-head">
+    <div class="eyebrow">How We Work</div>
+    <h2>What we hold ourselves to</h2>
+  </div>
+  <div class="value-list">
+    <div class="value-row">
+      <div class="vnum">01</div>
+      <h3>Safety first</h3>
+      <p>Every site runs on the same standard, no exceptions. We're investing in new interactive training so it's second nature — not just a policy on a wall.</p>
+    </div>
+    <div class="value-row">
+      <div class="vnum">02</div>
+      <h3>Precision</h3>
+      <p>Automotive schedules leave no room for approximate. We measure ourselves on minutes, not days.</p>
+    </div>
+    <div class="value-row">
+      <div class="vnum">03</div>
+      <h3>Long-term partnership</h3>
+      <p>Most of our client relationships are measured in years, not contracts — we plan for their next model line, not just this one.</p>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div>
+    <div class="eyebrow">Get In Touch</div>
+    <h2>Let's keep your line moving.</h2>
+    <p>Whether you need warehousing, sequencing, or freight capacity added to an existing supply chain, our team can scope it against your production schedule.</p>
+  </div>
+  <div class="info-box">
+    <strong>Nexsus Logistics</strong>
+    <div class="row"><span>HQ</span><span>Sunderland, UK</span></div>
+    <div class="row"><span>Sites</span><span>3 warehousing facilities</span></div>
+    <div class="row"><span>Sector focus</span><span>Automotive supply chain</span></div>
+    <div class="row"><span>Founded</span><span>1998</span></div>
+  </div>
+</section>
+
+<footer>Nexsus Logistics — Warehousing &amp; Freight for Automotive</footer>
+
+<script src="/static/javascript/main.js"></script>
+</body>
+</html>

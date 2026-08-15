@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — Nexsus Logistics</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<style>
+  main {
+    max-width: 480px;
+    margin: 50px auto 80px auto;
+    padding: 0 20px;
+  }
+  .auth-card {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-top: 4px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: 36px 32px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  }
+  .auth-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .auth-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .auth-header p {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--panel-card);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    font-size: 14.5px;
+    outline: none;
+    transition: border-color var(--transition-fast);
+  }
+  .form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+  }
+  .alert-error {
+    background: rgba(232, 89, 12, 0.15);
+    border: 1px solid #E8590C;
+    color: #EDEFF2;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .btn-submit {
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    color: #0B1220;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+  }
+  .btn-submit:hover {
+    background: var(--accent-hover);
+  }
+  .auth-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .auth-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .auth-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/home/" class="logo-container">
+    <div class="logo">
+      <img src="/static/img/nexsus_logo.png" alt="Nexsus Logo" onerror="this.src='/static/img/nexsus_logo.png'; this.onerror=null;">
+    </div>
+    <div class="brand-title">
+      Nexsus Logistics
+      <span>Warehousing &amp; Safety</span>
+    </div>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="/home/">Home</a></li>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/guidelines/">Guidelines</a></li>
+    <li><a href="/quiz/">Quiz</a></li>
+    <li class="dropdown">
+      <a href="#training">Training</a>
+      <ul class="dropdown-content">
+        <li><a href="/crane/">Crane Operator</a></li>
+        <li><a href="/forklift/">Forklift Training</a></li>
+      </ul>
+    </li>
+    <li><a href="/contact/">Contact</a></li>
+    <li><a href="/login/">Login</a></li>
+    <li><a href="/signup/" class="active">Sign Up</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>Create Trainee Account</h1>
+      <p>Register to complete safety guidelines and operating simulators</p>
+    </div>
+
+    {% if error %}
+      <div class="alert-error">
+        ⚠️ {{ error }}
+      </div>
+    {% endif %}
+
+    <form method="POST" action="/signup/">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Choose a username" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Choose a password" required>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Repeat your password" required>
+      </div>
+
+      <button type="submit" class="btn-submit">Register Account &rarr;</button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="/login/">Log In</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 Nexsus Logistics &amp; Warehousing Company &middot; Joint Venture Training Programme
+</footer>
+
+<script src="/static/javascript/main.js"></script>
+</body>
+</html>

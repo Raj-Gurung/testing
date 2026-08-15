@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guidelines — Nexsus Logistics and Warehousing Company</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #12161C;
+    color: #EDEFF2;
+  }
+
+  :root{
+    --panel:#171C24;
+    --ink:#EDEFF2;
+    --muted:#98A2B0;
+    --line:#262C36;
+    --accent:#5B9DF9;
+    --accent-soft:#1B2536;
+  }
+
+  main{ max-width:820px; margin:0 auto; padding:44px 24px 60px 24px; line-height:1.6; }
+
+  main h1{ font-size:28px; font-weight:700; letter-spacing:-0.01em; margin:0 0 10px 0; color:var(--ink); }
+  main h2{ font-size:20px; font-weight:700; letter-spacing:-0.01em; margin:0 0 4px 0; color:var(--ink); }
+  main h3{
+    font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--muted); margin:22px 0 10px 0;
+  }
+  main p{ font-size:15px; color:var(--muted); margin:0 0 14px 0; }
+  main p:last-child{ margin-bottom:0; }
+  main strong{ color:var(--ink); font-weight:600; }
+
+  .intro{ padding-bottom:26px; border-bottom:1px solid var(--line); margin-bottom:30px; }
+  .kicker{
+    font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:8px;
+  }
+  .reqs{ display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:16px; }
+  .reqs div{ font-size:13.5px; color:var(--muted); }
+  .reqs strong{ color:var(--ink); }
+
+  .module{ margin-bottom:44px; }
+  .module:last-child{ margin-bottom:0; }
+  .mod-num{
+    display:inline-block; font-size:12px; font-weight:700; color:var(--accent);
+    background:var(--accent-soft); border-radius:20px; padding:3px 11px; margin-bottom:10px;
+    letter-spacing:0.03em;
+  }
+
+  .cols{ display:grid; grid-template-columns:1.3fr 1fr; gap:32px; margin-top:18px; }
+  @media (max-width:680px){ .cols{ grid-template-columns:1fr; } }
+
+  .steps{ list-style:none; margin:0; padding:0; counter-reset:step; }
+  .steps li{
+    counter-increment:step; display:flex; gap:12px; font-size:14px; color:var(--ink);
+    padding:9px 0; border-bottom:1px solid var(--line);
+  }
+  .steps li:last-child{ border-bottom:none; }
+  .steps li::before{
+    content:counter(step); flex:none; width:20px; height:20px; border-radius:50%;
+    background:var(--panel); border:1px solid var(--line); color:var(--muted);
+    font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;
+  }
+
+  .keytable{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  .keytable td{ padding:8px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+  .keytable tr:last-child td{ border-bottom:none; }
+  .keytable td:first-child{ width:130px; color:var(--ink); font-weight:600; white-space:nowrap; }
+  .keytable td:last-child{ color:var(--muted); }
+  .key{
+    display:inline-block; font-family:ui-monospace,'SF Mono',Consolas,monospace; font-size:11.5px;
+    color:var(--ink); background:var(--panel); border:1px solid var(--line); border-radius:4px;
+    padding:1px 6px; margin-right:2px;
+  }
+
+  .note{
+    font-size:13.5px; color:var(--muted); padding:12px 14px; border-left:3px solid var(--accent);
+    background:var(--panel); border-radius:0 6px 6px 0; margin-top:16px;
+  }
+  .note strong{ color:var(--ink); }
+
+  .tags{ margin-top:14px; font-size:13px; color:var(--muted); }
+  .tags strong{ color:var(--ink); }
+
+  .cta-row{ display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+  .btn{
+    display:inline-block; font-size:13.5px; font-weight:600; padding:9px 16px; border-radius:6px;
+    background:var(--accent); color:#0B1220; text-decoration:none;
+  }
+
+  footer{
+    border-top:1px solid var(--line); padding:24px; text-align:center; font-size:12.5px; color:var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/home/" class="logo-container">
+    <div class="logo">
+      <img src="/static/img/nexsus_logo.png" alt="Logo" onerror="this.src='/static/img/nexsus_logo.png'; this.onerror=null;">
+    </div>
+    <div class="brand-title">
+      Nexsus Logistics
+      <span>Warehousing &amp; Safety</span>
+    </div>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="/home/">Home</a></li>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/guidelines/" class="active">Guidelines</a></li>
+    <li><a href="/quiz/">Quiz</a></li>
+    <li class="dropdown">
+      <a href="#training">Training</a>
+      <ul class="dropdown-content">
+        <li><a href="/crane/">Crane Operator</a></li>
+        <li><a href="/forklift/">Forklift Training</a></li>
+      </ul>
+    </li>
+    <li><a href="/contact/">Contact</a></li>
+
+    {% if request.user.is_authenticated %}
+      {% if request.user.profile.role == 'admin' %}
+        <li><a href="/admin-dashboard/" style="color: var(--yellow);">Admin Dashboard</a></li>
+      {% endif %}
+      <li><a href="/logout/" style="color: #E8590C; font-weight: 600;">Logout ({{ request.user.username }})</a></li>
+    {% else %}
+      <li><a href="/login/">Login</a></li>
+      <li><a href="/signup/">Sign Up</a></li>
+    {% endif %}
+  </ul>
+</nav>
+
+<main>
+  <div class="intro">
+    <div class="kicker">Health &amp; Safety &middot; Interactive Practical Training</div>
+    <h1>Warehouse Equipment Simulators</h1>
+    <p>Two browser-based 3D simulations built to support our health &amp; safety training programme. Each one walks through a real operating sequence and coaches you on technique as you go. They run directly in the browser — nothing to install, no account needed.</p>
+    <div class="reqs">
+      <div><strong>Device:</strong> desktop or laptop recommended (keyboard controls)</div>
+      <div><strong>Browser:</strong> Chrome, Edge, Firefox, or Safari</div>
+      <div><strong>Sound:</strong> on, for horn and feedback cues</div>
+    </div>
+  </div>
+
+  <!-- Module 1 -->
+  <div class="module">
+    <span class="mod-num">Module 01</span>
+    <h2>Overhead Crane Handling</h2>
+    <p>Operate a warehouse overhead gantry crane: lift a crate from the marked pickup zone, carry it clear of a striped hazard walkway, and set it down gently in the drop zone. The load swings like a real suspended load, so smooth, gradual movements are the whole point.</p>
+
+    <div class="cols">
+      <div>
+        <h3>How it runs</h3>
+        <ol class="steps">
+          <li>Read the briefing screen, then start the lift.</li>
+          <li>Drive the trolley over the crate in Zone A and lower the hook until it's close enough to attach.</li>
+          <li>Lift and carry the load toward Zone B, routing around the hazard zone — a load should never pass over it.</li>
+          <li>Lower the load fully to the floor inside Zone B, then release.</li>
+          <li>Review your score, time, and any safety flags on the results screen.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Controls</h3>
+        <table class="keytable">
+          <tr><td><span class="key">&#8592;&#8593;&#8595;&#8594;</span></td><td>Move gantry / trolley</td></tr>
+          <tr><td><span class="key">W</span><span class="key">S</span></td><td>Hoist up / down</td></tr>
+          <tr><td><span class="key">Space</span></td><td>Attach hook / release load</td></tr>
+          <tr><td>Drag</td><td>Orbit camera</td></tr>
+          <tr><td>Scroll</td><td>Zoom in / out</td></tr>
+        </table>
+        <div class="tags"><strong>Assessed:</strong> load control, hazard avoidance, safe release, time.</div>
+      </div>
+    </div>
+
+    <div class="note"><strong>Tip:</strong> sudden starts and stops cause the load to swing. Ease into every movement and let it settle before changing direction. <strong>Rule:</strong> you can't set a load down in the hazard zone, and you can't release it mid-air — it must be fully grounded first.</div>
+
+    <div class="cta-row">
+      <a class="btn" href="/crane/">Launch Crane Simulator &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Module 2 -->
+  <div class="module">
+    <span class="mod-num">Module 02</span>
+    <h2>Forklift Operator Handling</h2>
+    <p>Walk through the real sequence of a counterbalance forklift job: a pre-operation walk-around check, then a guided drive where the sim coaches you live on seatbelt use, keeping the load low while travelling, sounding the horn at blind corners, and controlling your speed indoors.</p>
+
+    <div class="cols">
+      <div>
+        <h3>How it runs</h3>
+        <ol class="steps">
+          <li>Complete the pre-operation walk-around — tick off tyres, forks, mast, horn/lights, seatbelt, and fluid leaks before the engine will start.</li>
+          <li>Buckle your seatbelt before moving off — the forklift won't accelerate without it.</li>
+          <li>Drive out, approach a crate square-on, lower the forks, and pick it up.</li>
+          <li>Carry it to the striped bay at a safe travel height, sounding the horn at the blind corner.</li>
+          <li>Lower the forks and set the crate down inside the bay.</li>
+          <li>Check your debrief: time on task and any safety flags raised.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Controls</h3>
+        <table class="keytable">
+          <tr><td><span class="key">W</span><span class="key">S</span></td><td>Drive forward / reverse</td></tr>
+          <tr><td><span class="key">A</span><span class="key">D</span></td><td>Steer left / right</td></tr>
+          <tr><td><span class="key">&#8593;</span><span class="key">&#8595;</span></td><td>Raise / lower forks</td></tr>
+          <tr><td><span class="key">Z</span><span class="key">X</span></td><td>Tilt mast back / forward</td></tr>
+          <tr><td><span class="key">E</span></td><td>Pick up / set down crate</td></tr>
+          <tr><td><span class="key">H</span></td><td>Sound horn</td></tr>
+          <tr><td><span class="key">B</span></td><td>Buckle / unbuckle seatbelt</td></tr>
+        </table>
+        <div class="tags"><strong>Assessed:</strong> pre-op check, seatbelt use, travel height, speed, horn use.</div>
+      </div>
+    </div>
+
+    <div class="note"><strong>Tip:</strong> live coaching appears the moment the sim notices risky technique — raised forks while moving, going too fast, or missing the horn at a corner. Each tip shows once per session.</div>
+
+    <div class="cta-row">
+      <a class="btn" href="/forklift/">Launch Forklift Simulator &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Module 3 -->
+  <div class="module">
+    <span class="mod-num">Module 03</span>
+    <h2>Workplace Ethics &amp; Conduct</h2>
+    <p>Safety starts with personal integrity, accountability, and respect for teammates. Nexsus Logistics upholds high standards of professional ethics across all facility operations.</p>
+
+    <div class="cols">
+      <div>
+        <h3>Core Principles</h3>
+        <ol class="steps">
+          <li><strong>Incident Reporting:</strong> Immediately report all near-misses, injuries, and equipment damages within 2 hours. Concealing incidents is prohibited.</li>
+          <li><strong>Substance-Free Environment:</strong> Operating machinery under the influence of alcohol, illegal drugs, or impairing medication is strictly prohibited.</li>
+          <li><strong>Equipment Integrity:</strong> Never bypass safety interlocks, disable horns, or operate uncertified machinery.</li>
+          <li><strong>Team Safety:</strong> Speak up if a coworker is performing a dangerous maneuver. Maintain a clean, safe work floor.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Ethics Rulebook</h3>
+        <table class="keytable">
+          <tr><td>Impairment</td><td>Zero tolerance policy; mandatory drug &amp; alcohol testing.</td></tr>
+          <tr><td>Near-Misses</td><td>Must be reported to shift supervisor promptly.</td></tr>
+          <tr><td>Tampering</td><td>Modifying safety governors or switches results in termination.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Module 4 -->
+  <div class="module">
+    <span class="mod-num">Module 04</span>
+    <h2>Hazard Tasks &amp; Safe Operating Procedures</h2>
+    <p>Understanding hazard controls, correct ergonomics, chemical spill handling, and Personal Protective Equipment (PPE) is mandatory before stepping onto the warehouse floor.</p>
+
+    <div class="cols">
+      <div>
+        <h3>Standard Safety Tasks</h3>
+        <ol class="steps">
+          <li><strong>Manual Lifting:</strong> Bend at the knees, keep heavy loads close to your chest, pivot with your feet—never twist your spine.</li>
+          <li><strong>Spill Response:</strong> Isolate chemical or oil spills, place warning cones, and notify the hazmat team immediately. Never touch unknown liquids.</li>
+          <li><strong>PPE Compliance:</strong> High-visibility vest, steel-toe boots, and hard hat must be worn at all times in active transport zones.</li>
+          <li><strong>Lockout / Tagout (LOTO):</strong> De-energize and tag malfunctioning machinery before inspection or cleaning.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Key Hazard Controls</h3>
+        <table class="keytable">
+          <tr><td>Pedestrians</td><td>Stay inside yellow walkways; maintain safe distance from operating forklifts.</td></tr>
+          <tr><td>Blind Corners</td><td>Stop, look, and sound horn before walking or driving into intersections.</td></tr>
+          <tr><td>Lifting Limit</td><td>Loads over 25kg require 2-person lift or mechanical assistance.</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="border-left-color:var(--accent);">
+    <strong>Prerequisite Confirmation:</strong> Both simulator modules and ethics/hazard rules can be replayed as many times as you like. Once you have reviewed the guidelines, head to the <a href="/quiz/" style="color:var(--accent); text-decoration:underline;">quiz</a> to check what stuck (score &gt; 60% required to unlock training).
+    <div class="cta-row" style="margin-top:14px;">
+      <a id="btn-proceed-quiz" class="btn" href="/quiz/">I Have Read &amp; Understood Guidelines — Take Quiz &rarr;</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 Nexsus Logistics and Warehousing Company &middot; Joint Venture Training Programme
+</footer>
+
+<script src="/static/javascript/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.NexsusState) {
+      window.NexsusState.markGuidelinesRead();
+    }
+  });
+
+  document.querySelectorAll('#btn-proceed-quiz, a[href*="crane"], a[href*="forklift"], a[href*="quiz"]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (window.NexsusState) {
+        window.NexsusState.markGuidelinesRead();
+      }
+    });
+  });
+</script>
+</body>
+</html>
