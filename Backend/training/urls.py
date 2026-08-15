@@ -15,5 +15,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('admin-dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
     path('api/quiz/submit/', views.submit_quiz_api, name='api_submit_quiz'),
+    path('api/simulation/submit/', views.submit_simulation_api, name='api_submit_simulation'),
 ]
+
 

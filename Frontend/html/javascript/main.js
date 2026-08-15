@@ -96,6 +96,61 @@
       });
     },
 
+    saveSimulationResult: function (simulatorType, timeTakenSeconds, score, passed) {
+      function getCsrfToken() {
+        const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfInput && csrfInput.value) return csrfInput.value;
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+              cookieValue = decodeURIComponent(cookie.substring(10));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      const csrftoken = getCsrfToken();
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (csrftoken) {
+        headers['X-CSRFToken'] = csrftoken;
+      }
+
+      fetch('/api/simulation/submit/', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          simulator_type: simulatorType,
+          time_taken_seconds: parseFloat(timeTakenSeconds),
+          score: parseFloat(score),
+          passed: Boolean(passed)
+        })
+      })
+      .then(function(response) {
+        if (!response.ok) {
+          console.warn('Backend simulation submit returned status:', response.status);
+        } else {
+          return response.json();
+        }
+      })
+      .then(function(data) {
+        if (data) {
+          console.log('Simulation result saved to database:', data);
+        }
+      })
+      .catch(function(err) {
+        console.warn('Unable to persist simulation result to backend API:', err);
+      });
+    },
+
+
+
 
     resetProgress: function () {
       localStorage.removeItem(STORAGE_KEYS.GUIDELINES_READ);

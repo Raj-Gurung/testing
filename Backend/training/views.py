@@ -7,8 +7,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from training.models import Profile, QuizResult
-from training.serializers import QuizResultSerializer
+from training.models import Profile, QuizResult, SimulationResult
+from training.serializers import QuizResultSerializer, SimulationResultSerializer
+
 
 
 
@@ -130,4 +131,31 @@ def submit_quiz_api(request):
 
     serializer = QuizResultSerializer(quiz_result)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def submit_simulation_api(request):
+    simulator_type = request.data.get('simulator_type')
+    if simulator_type not in ['crane', 'forklift']:
+        return Response({'error': "simulator_type must be 'crane' or 'forklift'"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        time_taken_seconds = float(request.data.get('time_taken_seconds'))
+        score = float(request.data.get('score'))
+        passed = bool(request.data.get('passed'))
+    except (ValueError, TypeError):
+        return Response({'error': 'Invalid or missing simulation payload'}, status=status.HTTP_400_BAD_REQUEST)
+
+    sim_result = SimulationResult.objects.create(
+        user=request.user,
+        simulator_type=simulator_type,
+        time_taken_seconds=time_taken_seconds,
+        score=score,
+        passed=passed
+    )
+
+    serializer = SimulationResultSerializer(sim_result)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 

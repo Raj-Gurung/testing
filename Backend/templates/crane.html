@@ -212,7 +212,9 @@
 </style>
 </head>
 <body>
+<div style="display:none;">{% csrf_token %}</div>
 <div id="app">
+
   <div id="loading"><div class="spin"></div><span>Loading Crane Bay&hellip;</span></div>
 
   <div id="toasts"></div>
@@ -961,7 +963,10 @@
     state.running = false;
     var timeBonus = state.elapsed < 75 ? 10 : 0;
     if(timeBonus) state.score = Math.min(100, state.score + timeBonus);
-    document.getElementById('endScore').textContent = Math.round(state.score);
+    var finalScore = Math.round(state.score);
+    var passed = finalScore >= 60;
+
+    document.getElementById('endScore').textContent = finalScore;
     var mm = Math.floor(state.elapsed/60), ss = Math.floor(state.elapsed%60);
     document.getElementById('endTime').textContent = (mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;
     document.getElementById('endIncidents').textContent = state.incidents;
@@ -978,7 +983,12 @@
       });
     }
     document.getElementById('endOverlay').style.display = 'flex';
+
+    if (window.NexsusState && window.NexsusState.saveSimulationResult) {
+      window.NexsusState.saveSimulationResult('crane', state.elapsed, finalScore, passed);
+    }
   }
+
 
   function startSim(){
     state.running = true;

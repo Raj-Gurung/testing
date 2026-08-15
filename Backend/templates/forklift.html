@@ -233,6 +233,8 @@
 </style>
 </head>
 <body>
+<div style="display:none;">{% csrf_token %}</div>
+
 
 <div class="hazard-edge top"></div>
 <div class="hazard-edge bottom"></div>
@@ -478,6 +480,10 @@
     document.getElementById('debrief-time').textContent = mm+':'+String(ss).padStart(2,'0');
     const totalFlags = Object.values(flagLog).reduce((a,b)=>a+b,0);
     document.getElementById('debrief-flags').textContent = totalFlags;
+
+    const score = Math.max(0, 100 - (totalFlags * 10));
+    const passed = score >= 60;
+
     const list = document.getElementById('flag-list');
     list.innerHTML = '';
     if(totalFlags === 0){
@@ -493,7 +499,12 @@
       });
     }
     setTimeout(()=> showScreen('debrief'), 600);
+
+    if (window.NexsusState && window.NexsusState.saveSimulationResult) {
+      window.NexsusState.saveSimulationResult('forklift', elapsedSec, score, passed);
+    }
   }
+
 
   // ======================================================================
   // Three.js scene
