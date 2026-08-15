@@ -6,138 +6,1030 @@
 <title>Admin Dashboard — Nexsus Logistics</title>
 <link rel="stylesheet" href="/static/css/style.css">
 <style>
-  main {
-    max-width: 960px;
-    margin: 40px auto 80px auto;
-    padding: 0 20px;
+  :root {
+    --bg-dark: #12161C;
+    --panel: #171C24;
+    --panel-card: #1C232E;
+    --ink: #EDEFF2;
+    --muted: #98A2B0;
+    --line: #262C36;
+    --accent: #5B9DF9;
+    --accent-soft: rgba(91, 157, 249, 0.12);
+    --success: #2BAE66;
+    --danger: #E8590C;
+    --warning: #F5B700;
   }
-  .dashboard-banner {
-    background: var(--panel);
-    border: 1px solid var(--panel-border);
-    border-left: 4px solid var(--yellow);
-    border-radius: var(--radius-md);
-    padding: 28px;
-    margin-bottom: 30px;
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
-  .dashboard-banner h1 {
-    font-size: 26px;
+
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-dark);
     color: var(--ink);
-    margin-bottom: 8px;
+    height: 100vh;
+    overflow: hidden;
   }
-  .dashboard-banner p {
+
+  /* Main Container Layout */
+  .admin-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* Left Sidebar */
+  .admin-sidebar {
+    width: 250px;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sidebar-header img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-text h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  .brand-text span {
+    font-size: 11px;
+    color: var(--warning);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .sidebar-nav {
+    padding: 20px 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
     color: var(--muted);
-    font-size: 15px;
+    font-size: 14.5px;
+    font-weight: 600;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: all 0.15s ease;
   }
-  .admin-badge {
+
+  .nav-btn:hover {
+    background: var(--panel-card);
+    color: var(--ink);
+  }
+
+  .nav-btn.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-left: 4px solid var(--accent);
+  }
+
+  .sidebar-footer {
+    padding: 20px 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .user-info-sm {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .user-info-sm strong {
+    color: var(--ink);
+  }
+
+  .btn-logout-sidebar {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: rgba(232, 89, 12, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(232, 89, 12, 0.3);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+
+  .btn-logout-sidebar:hover {
+    background: rgba(232, 89, 12, 0.25);
+  }
+
+  /* Right Main Content */
+  .admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: var(--bg-dark);
+  }
+
+  .top-header {
+    padding: 24px 32px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .top-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .content-area {
+    padding: 32px;
+    flex: 1;
+  }
+
+  /* Views / Tabs */
+  .view-panel {
+    display: none;
+  }
+
+  .view-panel.active {
+    display: block;
+  }
+
+  /* Filter Controls Bar */
+  .filter-bar {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 220px;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    background: var(--panel-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink);
+    font-size: 14px;
+    outline: none;
+  }
+
+  .search-box input:focus {
+    border-color: var(--accent);
+  }
+
+  .search-box::before {
+    content: "🔍";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    opacity: 0.6;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filter-group label {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .filter-select {
+    background: var(--panel-card);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 9px 14px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* Tables */
+  .table-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th {
+    background: #171C24;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--ink);
+    vertical-align: middle;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background: rgba(91, 157, 249, 0.03);
+  }
+
+  /* Badges */
+  .badge {
     display: inline-block;
-    background: rgba(255, 204, 0, 0.15);
-    color: var(--yellow);
     padding: 4px 10px;
     border-radius: 12px;
     font-size: 12px;
     font-weight: 700;
+    text-align: center;
+  }
+
+  .badge-passed {
+    background: rgba(43, 174, 102, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(43, 174, 102, 0.3);
+  }
+
+  .badge-failed {
+    background: rgba(232, 89, 12, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(232, 89, 12, 0.3);
+  }
+
+  .badge-pending {
+    background: rgba(152, 162, 176, 0.15);
+    color: var(--muted);
+    border: 1px solid rgba(152, 162, 176, 0.3);
+  }
+
+  .badge-role-admin {
+    background: rgba(245, 183, 0, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(245, 183, 0, 0.3);
+  }
+
+  .badge-role-user {
+    background: rgba(91, 157, 249, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(91, 157, 249, 0.3);
+  }
+
+  /* Action Buttons */
+  .btn-action-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-tbl {
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+  }
+
+  .btn-tbl-detail {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: rgba(91, 157, 249, 0.3);
+  }
+
+  .btn-tbl-detail:hover {
+    background: rgba(91, 157, 249, 0.25);
+  }
+
+  .btn-tbl-edit {
+    background: rgba(245, 183, 0, 0.12);
+    color: var(--warning);
+    border-color: rgba(245, 183, 0, 0.3);
+  }
+
+  .btn-tbl-edit:hover {
+    background: rgba(245, 183, 0, 0.25);
+  }
+
+  .btn-tbl-delete {
+    background: rgba(232, 89, 12, 0.12);
+    color: var(--danger);
+    border-color: rgba(232, 89, 12, 0.3);
+  }
+
+  .btn-tbl-delete:hover {
+    background: rgba(232, 89, 12, 0.25);
+  }
+
+  /* Leaderboard Ranks */
+  .rank-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  .rank-1 { background: #F5B700; color: #12161C; }
+  .rank-2 { background: #D1D5DB; color: #12161C; }
+  .rank-3 { background: #CD7F32; color: #12161C; }
+  .rank-other { background: var(--panel-card); color: var(--muted); border: 1px solid var(--line); }
+
+  /* Modals */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(8, 12, 18, 0.85);
+    backdrop-filter: blur(6px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    max-width: 560px;
+    width: 100%;
+    padding: 28px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    position: relative;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .modal-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .modal-close:hover {
+    color: var(--ink);
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--panel-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink);
+    font-size: 14.5px;
+    outline: none;
+  }
+
+  .form-control:focus {
+    border-color: var(--accent);
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .history-section {
+    margin-top: 18px;
+  }
+
+  .history-section h4 {
+    font-size: 14.5px;
+    color: var(--accent);
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 12px;
   }
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-  }
-  .admin-card {
+
+  .history-item {
     background: var(--panel-card);
-    border: 1px solid var(--panel-border);
-    border-radius: var(--radius-md);
-    padding: 24px;
-  }
-  .admin-card h3 {
-    font-size: 18px;
-    color: var(--ink);
-    margin-bottom: 10px;
-  }
-  .admin-card p {
-    font-size: 14px;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
-  .btn-admin {
-    display: inline-block;
-    padding: 10px 16px;
-    background: var(--accent);
-    color: #0B1220;
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 14px;
-  }
-  .btn-admin:hover {
-    background: var(--accent-hover);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 13.5px;
+    display: flex;
+    justify-content: space-between;
   }
 </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <a href="/home/" class="logo-container">
-    <div class="logo">
+{% csrf_token %}
+
+<div class="admin-layout">
+  <!-- Left Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
       <img src="/static/img/nexsus_logo.png" alt="Nexsus Logo" onerror="this.src='/static/img/nexsus_logo.png'; this.onerror=null;">
+      <div class="brand-text">
+        <h2>Nexsus Admin</h2>
+        <span>Control Panel</span>
+      </div>
     </div>
-    <div class="brand-title">
-      Nexsus Logistics
-      <span>Warehousing &amp; Safety</span>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" id="tab-btn-trainees" onclick="switchTab('trainees')">
+        <span>📊</span> Trainees &amp; Dashboard
+      </button>
+      <button class="nav-btn" id="tab-btn-leaderboard" onclick="switchTab('leaderboard')">
+        <span>🏆</span> Simulation Leaderboard
+      </button>
+      <a href="/home/" class="nav-btn" style="margin-top: 12px;">
+        <span>🏠</span> Training Portal Home
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info-sm">
+        Logged in as: <strong>{{ request.user.username }}</strong>
+      </div>
+      <a href="/logout/" class="btn-logout-sidebar">Logout Administrator</a>
     </div>
-  </a>
+  </aside>
 
-  <ul class="nav-links">
-    <li><a href="/home/">Home</a></li>
-    <li><a href="/about/">About</a></li>
-    <li><a href="/guidelines/">Guidelines</a></li>
-    <li><a href="/quiz/">Quiz</a></li>
-    <li class="dropdown">
-      <a href="#training">Training</a>
-      <ul class="dropdown-content">
-        <li><a href="/crane/">Crane Operator</a></li>
-        <li><a href="/forklift/">Forklift Training</a></li>
-      </ul>
-    </li>
-    <li><a href="/contact/">Contact</a></li>
-    {% if request.user.is_authenticated %}
-      <li><a href="/admin-dashboard/" class="active" style="color: var(--yellow);">Admin Dashboard</a></li>
-      <li><a href="/logout/" style="color: #E8590C; font-weight: 600;">Logout ({{ request.user.username }})</a></li>
-    {% else %}
-      <li><a href="/login/">Login</a></li>
-      <li><a href="/signup/">Sign Up</a></li>
-    {% endif %}
-  </ul>
-</nav>
+  <!-- Right Main Content -->
+  <main class="admin-main">
+    <header class="top-header">
+      <h1 id="page-title">Trainees Directory &amp; Status</h1>
+      <span class="badge badge-role-admin">Admin Authenticated</span>
+    </header>
 
-<main>
-  <div class="dashboard-banner">
-    <span class="admin-badge">Administrator Access</span>
-    <h1>Welcome, {{ request.user.username }}</h1>
-    <p>You are logged in as an Administrator. You have full access to managing users and training records.</p>
+    <div class="content-area">
+
+      <!-- View 1: Trainees Table & Filters -->
+      <section id="view-trainees" class="view-panel active">
+        <div class="filter-bar">
+          <div class="search-box">
+            <input type="text" id="trainee-search" placeholder="Search by username or email..." oninput="applyFilters()">
+          </div>
+
+          <div class="filter-group">
+            <label for="status-filter">Quiz Status:</label>
+            <select id="status-filter" class="filter-select" onchange="applyFilters()">
+              <option value="all">All Statuses</option>
+              <option value="unlocked">Fully Unlocked</option>
+              <option value="quiz_passed">Quiz Passed</option>
+              <option value="quiz_failed">Quiz Failed</option>
+              <option value="pending">Quiz Pending</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="sim-filter">Simulator Status:</label>
+            <select id="sim-filter" class="filter-select" onchange="applyFilters()">
+              <option value="all">All Simulators</option>
+              <option value="crane">Crane Completed</option>
+              <option value="forklift">Forklift Completed</option>
+              <option value="both">Both Completed</option>
+              <option value="none">No Sims Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Latest Quiz Score</th>
+                <th>Quiz Status</th>
+                <th>Crane Sim Time</th>
+                <th>Forklift Sim Time</th>
+                <th>Overall Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="trainees-tbl-body">
+              {% for t in trainees %}
+              <tr class="trainee-row"
+                  data-username="{{ t.username|lower }}"
+                  data-email="{{ t.email|lower }}"
+                  data-status="{{ t.status_code }}"
+                  data-crane="{% if t.crane_time_raw %}1{% else %}0{% endif %}"
+                  data-forklift="{% if t.forklift_time_raw %}1{% else %}0{% endif %}">
+                <td>
+                  <strong>{{ t.username }}</strong>
+                </td>
+                <td>
+                  <span class="badge {% if t.role == 'admin' %}badge-role-admin{% else %}badge-role-user{% endif %}">
+                    {{ t.role|upper }}
+                  </span>
+                </td>
+                <td>
+                  {% if t.quiz_score is not None %}
+                    <strong>{{ t.quiz_score }}%</strong>
+                  {% else %}
+                    <span style="color: var(--muted);">—</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if t.quiz_passed is True %}
+                    <span class="badge badge-passed">✓ PASSED</span>
+                  {% elif t.quiz_passed is False %}
+                    <span class="badge badge-failed">✕ FAILED</span>
+                  {% else %}
+                    <span class="badge badge-pending">PENDING</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if t.crane_time_raw %}
+                    <span style="font-family: monospace; font-size: 14px;">⏱️ {{ t.crane_time_str }}</span>
+                  {% else %}
+                    <span style="color: var(--muted);">—</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if t.forklift_time_raw %}
+                    <span style="font-family: monospace; font-size: 14px;">🚜 {{ t.forklift_time_str }}</span>
+                  {% else %}
+                    <span style="color: var(--muted);">—</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if t.status_code == 'unlocked' %}
+                    <span class="badge badge-passed">🟢 UNLOCKED</span>
+                  {% elif t.status_code == 'quiz_passed' %}
+                    <span class="badge badge-passed">🟡 QUIZ PASSED</span>
+                  {% elif t.status_code == 'quiz_failed' %}
+                    <span class="badge badge-failed">🔴 QUIZ FAILED</span>
+                  {% else %}
+                    <span class="badge badge-pending">⚪ PENDING</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="btn-action-group">
+                    <button class="btn-tbl btn-tbl-detail" onclick="openDetailModal({{ t.id }})">Detail</button>
+                    <button class="btn-tbl btn-tbl-edit" onclick="openEditModal({{ t.id }}, '{{ t.username }}', '{{ t.role }}')">Edit</button>
+                    <button class="btn-tbl btn-tbl-delete" onclick="openDeleteModal({{ t.id }}, '{{ t.username }}')">Delete</button>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--muted); padding: 30px;">No registered trainees found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 2: Leaderboard -->
+      <section id="view-leaderboard" class="view-panel">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>Filter Simulator:</label>
+            <button class="btn-tbl btn-tbl-detail" onclick="filterLeaderboard('all')">All Simulators</button>
+            <button class="btn-tbl btn-tbl-edit" onclick="filterLeaderboard('crane')">Crane Only</button>
+            <button class="btn-tbl btn-tbl-edit" onclick="filterLeaderboard('forklift')">Forklift Only</button>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Simulator</th>
+                <th>Completion Time</th>
+                <th>Score</th>
+                <th>Result</th>
+                <th>Completed Date</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-tbl-body">
+              {% for l in leaderboard %}
+              <tr class="lb-row" data-sim="{{ l.sim_key }}">
+                <td>
+                  <span class="rank-badge {% if l.rank == 1 %}rank-1{% elif l.rank == 2 %}rank-2{% elif l.rank == 3 %}rank-3{% else %}rank-other{% endif %}">
+                    {{ l.rank }}
+                  </span>
+                </td>
+                <td><strong>{{ l.username }}</strong></td>
+                <td>
+                  {% if l.sim_key == 'crane' %}
+                    🏗️ Crane
+                  {% else %}
+                    🚜 Forklift
+                  {% endif %}
+                </td>
+                <td>
+                  <strong style="font-family: monospace; font-size: 15px; color: var(--accent);">⏱️ {{ l.time_str }}</strong>
+                  <span style="font-size: 12px; color: var(--muted);">({{ l.time_taken_seconds }}s)</span>
+                </td>
+                <td><strong>{{ l.score }}</strong></td>
+                <td>
+                  {% if l.passed %}
+                    <span class="badge badge-passed">PASSED</span>
+                  {% else %}
+                    <span class="badge badge-failed">FAILED</span>
+                  {% endif %}
+                </td>
+                <td style="color: var(--muted); font-size: 13px;">{{ l.completed_at }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--muted); padding: 30px;">No simulation results recorded yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- Modal: View Detail -->
+<div id="modal-detail" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Trainee Detail History</h3>
+      <button class="modal-close" onclick="closeModal('modal-detail')">&times;</button>
+    </div>
+    <div id="detail-modal-body">
+      <div style="text-align: center; color: var(--muted); padding: 20px;">Loading trainee record details...</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-tbl btn-tbl-detail" onclick="closeModal('modal-detail')">Close</button>
+    </div>
   </div>
+</div>
 
-  <div class="card-grid">
-    <div class="admin-card">
-      <h3>🛠️ Django Site Admin</h3>
-      <p>Manage raw database models, users, profiles, quiz results, and simulation entries.</p>
-      <a href="/admin/" class="btn-admin" target="_blank">Open Django Admin Panel &rarr;</a>
+<!-- Modal: Edit User -->
+<div id="modal-edit" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Edit Trainee Record</h3>
+      <button class="modal-close" onclick="closeModal('modal-edit')">&times;</button>
     </div>
+    <form id="edit-user-form" onsubmit="handleEditSubmit(event)">
+      <input type="hidden" id="edit-user-id">
+      <div class="form-group">
+        <label for="edit-username">Username:</label>
+        <input type="text" id="edit-username" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="edit-role">Role:</label>
+        <select id="edit-role" class="form-control">
+          <option value="user">User (Trainee)</option>
+          <option value="admin">Admin (Administrator)</option>
+        </select>
+      </div>
+      <div id="edit-error-msg" style="color: var(--danger); font-size: 13px; margin-bottom: 12px; display: none;"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn-tbl btn-tbl-detail" onclick="closeModal('modal-edit')">Cancel</button>
+        <button type="submit" class="btn-tbl btn-tbl-edit">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-    <div class="admin-card">
-      <h3>📚 Trainee Portal</h3>
-      <p>Explore the safety training guidelines and interactive machinery simulators.</p>
-      <a href="/home/" class="btn-admin">Go to Training Home &rarr;</a>
+<!-- Modal: Delete Confirmation -->
+<div id="modal-delete" class="modal-overlay">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 style="color: var(--danger);">Confirm User Deletion</h3>
+      <button class="modal-close" onclick="closeModal('modal-delete')">&times;</button>
+    </div>
+    <p style="font-size: 14.5px; color: var(--muted); margin-bottom: 16px;">
+      Are you sure you want to delete user <strong id="delete-username-display" style="color: var(--ink);"></strong>?
+    </p>
+    <div style="background: rgba(232, 89, 12, 0.12); border-left: 4px solid var(--danger); padding: 12px 14px; border-radius: 6px; font-size: 13px; color: var(--ink); margin-bottom: 20px;">
+      ⚠️ <strong>Cascade Warning:</strong> Deleting this user will permanently remove their profile, all quiz results, and all simulation run records from the database.
+    </div>
+    <div id="delete-error-msg" style="color: var(--danger); font-size: 13px; margin-bottom: 12px; display: none;"></div>
+    <input type="hidden" id="delete-user-id">
+    <div class="modal-footer">
+      <button type="button" class="btn-tbl btn-tbl-detail" onclick="closeModal('modal-delete')">Cancel</button>
+      <button type="button" class="btn-tbl btn-tbl-delete" onclick="handleDeleteSubmit()">Delete Permanently</button>
     </div>
   </div>
-</main>
+</div>
 
-<footer>
-  &copy; 2026 Nexsus Logistics &amp; Warehousing Company &middot; Joint Venture Training Programme
-</footer>
+<script>
+  function getCsrfToken() {
+    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (csrfInput && csrfInput.value) return csrfInput.value;
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, 10) === 'csrftoken=') {
+          cookieValue = decodeURIComponent(cookie.substring(10));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
 
-<script src="/static/javascript/main.js"></script>
+  function switchTab(tabName) {
+    document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+    if (tabName === 'trainees') {
+      document.getElementById('view-trainees').classList.add('active');
+      document.getElementById('tab-btn-trainees').classList.add('active');
+      document.getElementById('page-title').textContent = 'Trainees Directory & Status';
+    } else if (tabName === 'leaderboard') {
+      document.getElementById('view-leaderboard').classList.add('active');
+      document.getElementById('tab-btn-leaderboard').classList.add('active');
+      document.getElementById('page-title').textContent = 'Simulation Speed Leaderboard';
+    }
+  }
+
+  function applyFilters() {
+    const searchVal = document.getElementById('trainee-search').value.toLowerCase().trim();
+    const statusVal = document.getElementById('status-filter').value;
+    const simVal = document.getElementById('sim-filter').value;
+
+    document.querySelectorAll('.trainee-row').forEach(row => {
+      const username = row.dataset.username || '';
+      const email = row.dataset.email || '';
+      const status = row.dataset.status || '';
+      const hasCrane = row.dataset.crane === '1';
+      const hasForklift = row.dataset.forklift === '1';
+
+      let matchSearch = !searchVal || username.includes(searchVal) || email.includes(searchVal);
+      let matchStatus = statusVal === 'all' || status === statusVal;
+
+      let matchSim = true;
+      if (simVal === 'crane') matchSim = hasCrane;
+      else if (simVal === 'forklift') matchSim = hasForklift;
+      else if (simVal === 'both') matchSim = hasCrane && hasForklift;
+      else if (simVal === 'none') matchSim = !hasCrane && !hasForklift;
+
+      if (matchSearch && matchStatus && matchSim) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  function filterLeaderboard(simType) {
+    document.querySelectorAll('.lb-row').forEach(row => {
+      if (simType === 'all' || row.dataset.sim === simType) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  function openModal(id) {
+    document.getElementById(id).classList.add('active');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+
+  function openDetailModal(userId) {
+    const bodyEl = document.getElementById('detail-modal-body');
+    bodyEl.innerHTML = '<div style="text-align: center; color: var(--muted); padding: 20px;">Loading trainee history...</div>';
+    openModal('modal-detail');
+
+    fetch(`/api/admin/users/${userId}/detail/`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          bodyEl.innerHTML = `<div style="color: var(--danger); padding: 10px;">${data.error}</div>`;
+          return;
+        }
+
+        let quizHtml = '';
+        if (data.quiz_results && data.quiz_results.length > 0) {
+          data.quiz_results.forEach(q => {
+            quizHtml += `
+              <div class="history-item">
+                <span>Score: <strong>${q.score_percent}%</strong></span>
+                <span class="badge ${q.passed ? 'badge-passed' : 'badge-failed'}">${q.passed ? 'PASSED' : 'FAILED'}</span>
+                <span style="color: var(--muted); font-size: 12px;">${new Date(q.taken_at).toLocaleString()}</span>
+              </div>
+            `;
+          });
+        } else {
+          quizHtml = '<div style="color: var(--muted); font-size: 13px;">No quiz attempts recorded.</div>';
+        }
+
+        let simHtml = '';
+        if (data.simulation_results && data.simulation_results.length > 0) {
+          data.simulation_results.forEach(s => {
+            simHtml += `
+              <div class="history-item">
+                <span>Simulator: <strong>${s.simulator_type.toUpperCase()}</strong></span>
+                <span>Time: <strong>${s.time_taken_seconds}s</strong> | Score: ${s.score}</span>
+                <span class="badge ${s.passed ? 'badge-passed' : 'badge-failed'}">${s.passed ? 'PASSED' : 'FAILED'}</span>
+              </div>
+            `;
+          });
+        } else {
+          simHtml = '<div style="color: var(--muted); font-size: 13px;">No simulation runs recorded.</div>';
+        }
+
+        bodyEl.innerHTML = `
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 16px; font-weight: bold;">${data.username}</div>
+            <div style="font-size: 13px; color: var(--muted);">Joined: ${data.date_joined} | Role: ${data.role.toUpperCase()}</div>
+          </div>
+          <div class="history-section">
+            <h4>Quiz History (${data.quiz_results.length})</h4>
+            ${quizHtml}
+          </div>
+          <div class="history-section" style="margin-top: 20px;">
+            <h4>Simulation History (${data.simulation_results.length})</h4>
+            ${simHtml}
+          </div>
+        `;
+      })
+      .catch(err => {
+        bodyEl.innerHTML = '<div style="color: var(--danger); padding: 10px;">Failed to load user details.</div>';
+      });
+  }
+
+  function openEditModal(userId, username, role) {
+    document.getElementById('edit-user-id').value = userId;
+    document.getElementById('edit-username').value = username;
+    document.getElementById('edit-role').value = role;
+    document.getElementById('edit-error-msg').style.display = 'none';
+    openModal('modal-edit');
+  }
+
+  function handleEditSubmit(e) {
+    e.preventDefault();
+    const userId = document.getElementById('edit-user-id').value;
+    const username = document.getElementById('edit-username').value;
+    const role = document.getElementById('edit-role').value;
+    const errorEl = document.getElementById('edit-error-msg');
+
+    fetch(`/api/admin/users/${userId}/edit/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken()
+      },
+      body: JSON.stringify({ username: username, role: role })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        errorEl.textContent = data.error;
+        errorEl.style.display = 'block';
+      } else {
+        closeModal('modal-edit');
+        window.location.reload();
+      }
+    })
+    .catch(err => {
+      errorEl.textContent = 'Server error updating user.';
+      errorEl.style.display = 'block';
+    });
+  }
+
+  function openDeleteModal(userId, username) {
+    document.getElementById('delete-user-id').value = userId;
+    document.getElementById('delete-username-display').textContent = username;
+    document.getElementById('delete-error-msg').style.display = 'none';
+    openModal('modal-delete');
+  }
+
+  function handleDeleteSubmit() {
+    const userId = document.getElementById('delete-user-id').value;
+    const errorEl = document.getElementById('delete-error-msg');
+
+    fetch(`/api/admin/users/${userId}/delete/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken()
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        errorEl.textContent = data.error;
+        errorEl.style.display = 'block';
+      } else {
+        closeModal('modal-delete');
+        window.location.reload();
+      }
+    })
+    .catch(err => {
+      errorEl.textContent = 'Server error deleting user.';
+      errorEl.style.display = 'block';
+    });
+  }
+</script>
 </body>
 </html>

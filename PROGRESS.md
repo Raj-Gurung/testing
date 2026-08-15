@@ -1,11 +1,11 @@
 # Project Progress & Status Log
 
 ## Project Summary
-**Nexsus Logistics & Warehousing Safety Training Platform** — An enterprise web platform featuring user authentication, mandatory safety knowledge assessments, interactive 3D crane & forklift training simulators built with Three.js, and Django REST Framework API persistence.
+**Nexsus Logistics & Warehousing Safety Training Platform** — An enterprise web platform featuring user authentication, mandatory safety knowledge assessments, interactive 3D crane & forklift training simulators built with Three.js, DRF API persistence, and a custom Admin Dashboard with Trainees CRUD and Leaderboard views.
 
 ---
 
-## Completed Stages (1 through 4)
+## Completed Stages (1 through 5)
 
 ### Stage 1: Core Project Setup & User Authentication
 - **Functionality**:
@@ -82,6 +82,25 @@
 
 ---
 
+### Stage 5: Custom Dark Admin Dashboard, Trainees CRUD & Leaderboard
+- **Functionality**:
+  - Custom dark-themed 2-column sidebar layout matching site CSS variables (`admin_dashboard.html`).
+  - Server-side role check (`Profile.role == 'admin'`) enforcing 403 Forbidden / redirect for non-admin users across views and API endpoints.
+  - Trainees Table: displays username, role, latest quiz score & status, crane sim time, forklift sim time, and overall training status.
+  - Interactive Filter Controls: real-time search by username/email, status filter (unlocked/passed/failed/pending), and simulator completion filter.
+  - Full Trainees CRUD Actions:
+    - View Detail: Modal displaying user's complete history of quiz attempts and simulation runs.
+    - Edit User: Modal allowing role changes (`user`/`admin`) and username updates.
+    - Delete User: Confirmation modal that deletes the user and automatically cascade-deletes linked `QuizResult` and `SimulationResult` rows.
+  - Simulation Leaderboard: Ranked list of users by simulation completion time (fastest first) with simulator type filter buttons (All / Crane / Forklift).
+- **Files Touched/Created**:
+  - `Backend/templates/admin_dashboard.html`
+  - `Backend/training/views.py`
+  - `Backend/training/urls.py`
+  - `PROGRESS.md`
+
+---
+
 ## How to Run the Project
 
 ### 1. Start the Development Server
@@ -94,26 +113,10 @@ The server will start at `http://127.0.0.1:8000/`.
 ### 2. Admin Credentials
 - **Username**: `admin`
 - **Password**: `admin`
-- **Django Admin Interface**: `http://127.0.0.1:8000/admin/`
-
-
----
-
-## Stage 5 Specifications (Verbatim Instructions)
-
-```markdown
-STAGE 5: Build the admin dashboard.
-- Create a custom admin.html page/view, reachable only by users with Profile.role == 'admin' — enforce this server-side.
-- Match the site's existing dark theme (reuse CSS variables from quiz.html/style.css) — do NOT use a light theme.
-- Layout: a left sidebar with nav items (Dashboard/Trainees, Leaderboard, Log out), and a main content area on the right.
-- Main content area, "Trainees" view: a table of all users with columns — username, latest quiz score, quiz pass/fail, crane sim time (if any), forklift sim time (if any), overall status.
-- CRUD actions on that table: view full detail, edit a user's record, delete a user (cascade-delete their QuizResult and SimulationResult rows).
-- Add filter controls above the table: show all / passed only / failed only, and optionally filter by simulator completion.
-- Add a separate "Leaderboard" view/tab: all users ranked by simulation completion time (fastest first), showing username, simulator_type, time, score. Admin-only.
-- Keep it clean and functional — no stat cards or activity feeds needed.
-```
+- **Admin Dashboard**: `http://127.0.0.1:8000/admin-dashboard/`
+- **Django Standard Admin Interface**: `http://127.0.0.1:8000/admin/`
 
 ---
 
 ## Known Issues & Unfinished Items
-- **None**: System check (`python manage.py check`) passes with 0 issues. Database migrations are fully applied (`0001_initial`). Stages 1 through 4 are fully functional, tested, and persisted end-to-end.
+- **None**: System check (`python manage.py check`) passes with 0 issues. Database migrations are fully applied (`0001_initial`). Stages 1 through 5 are fully functional, tested, and verified end-to-end.
