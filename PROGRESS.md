@@ -137,24 +137,18 @@ The server will start at `http://127.0.0.1:8000/`.
 
 ## Known Issues & Unfinished Items
 
-### ⚠️ WIP — Mobile Responsiveness: Forklift Bug (NOT YET COMMITTED)
+*None — all stages complete and committed.*
 
-**Status**: Work-in-progress. **Not committed or pushed to Git.**
+---
 
-**What works (verified)**:
-- Navbar hamburger menu on mobile (`<= 880px`) — fully working.
-- Crane simulator mobile HUD (`<= 880px`) — compact controls and `👁️ Controls` toggle verified working.
+## Stage History Summary
 
-**What is broken**:
-- **Forklift simulator (`forklift.html`) — broken on both desktop AND mobile** due to the mobile touch controls insertion during this session.
-- **Error**: `Uncaught TypeError: Cannot set properties of null (setting 'textContent') at updateForklift (forklift.html:1184:31)` — fires on every animation frame inside `animate()`, preventing all forklift movement.
-- **Root cause**: The mobile touch overlay HTML (`#mobile-forklift-controls`) was accidentally inserted inside the `#dash` HUD `<div>`, breaking the closing tags and removing `<div id="tilt-indicator">MAST: LEVEL</div>` from the DOM. The JS variable `tiltIndicator = document.getElementById('tilt-indicator')` therefore resolves to `null`, crashing `updateForklift()` on line 1184: `tiltIndicator.textContent = ...`.
-
-**Fix required (next session)**:
-1. In `Backend/templates/forklift.html` and `Frontend/html/forklift.html`, inspect lines ~478–483 (around the `#dash` div closing tag).
-2. Restore `<div id="tilt-indicator">MAST: LEVEL</div>` inside `#dash`, close all parent divs properly, and place `#mobile-forklift-controls` **outside and after** the `#dash` div.
-3. Or alternatively, add a null-check in `updateForklift`: `if (tiltIndicator) tiltIndicator.textContent = ...;` as a defensive fix.
-4. Apply the same fix to both `Backend/templates/forklift.html` and `Frontend/html/forklift.html`.
-5. Verify both desktop keyboard controls (WASD, B, E, H, Z, X) and mobile touch buttons work correctly after fix.
-6. Then commit the full mobile responsiveness work as a completed stage.
+| Stage | Status | Commit |
+|-------|--------|--------|
+| Stage 1: Auth | ✅ Done | `2e0bb2b` |
+| Stage 2: Simulators | ✅ Done | `994ee82` |
+| Stage 3: Quiz API | ✅ Done | `994ee82` |
+| Stage 4: Sim Results API | ✅ Done | `994ee82` |
+| Stage 5: Admin Dashboard | ✅ Done | `50146e6` |
+| Quality: Mobile Responsiveness | ✅ Done | `7a734b0` |
 
