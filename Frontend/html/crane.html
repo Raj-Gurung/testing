@@ -201,16 +201,118 @@
   @keyframes spin{to{transform:rotate(360deg);}}
   #loading span{font-family:'Oswald',sans-serif; letter-spacing:2px; font-size:12px; color:var(--text-muted); text-transform:uppercase;}
 
-  @media (max-width: 640px){
-    #objective{display:none;}
-    .dpad{grid-template-columns:repeat(3,36px); grid-template-rows:repeat(3,36px);}
-    .hoistpad .padbtn{width:78px; height:36px; font-size:11px;}
-    #swingWrap{width:120px;}
-    .card-body{padding:20px 18px 22px 18px;}
-    .card h2{font-size:21px;}
+  /* Mobile Responsiveness for Crane Simulator (scoped to <=880px) */
+  @media (max-width: 880px) {
+    #topbar {
+      padding: 6px 8px;
+      gap: 6px;
+    }
+    #brand {
+      padding: 6px 10px;
+    }
+    #brand h1 {
+      font-size: 13px;
+    }
+    #brand span {
+      display: none;
+    }
+    #objective {
+      display: none;
+    }
+    .stat {
+      padding: 4px 8px;
+      min-width: 44px;
+    }
+    .stat .n {
+      font-size: 13px;
+    }
+    .stat .l {
+      font-size: 8px;
+    }
+    #controls {
+      bottom: 8px;
+      left: 6px;
+      right: 6px;
+      gap: 6px;
+      justify-content: space-between;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    #controls.collapsed {
+      opacity: 0.15;
+      pointer-events: none;
+      transform: translateY(60%);
+    }
+    .padgroup {
+      padding: 6px 8px;
+      background: rgba(20, 31, 45, 0.85);
+      backdrop-filter: blur(6px);
+      border-radius: 8px;
+    }
+    .padgroup .title {
+      font-size: 8.5px;
+      margin-bottom: 4px;
+    }
+    .keyhint, .keycap {
+      display: none;
+    }
+    .dpad {
+      grid-template-columns: repeat(3, 40px);
+      grid-template-rows: repeat(3, 40px);
+      gap: 3px;
+    }
+    .padbtn {
+      width: 40px;
+      height: 40px;
+      font-size: 15px;
+    }
+    .hoistpad {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hoistpad .padbtn {
+      width: 70px;
+      height: 38px;
+      font-size: 11px;
+    }
+    #attachBtn {
+      width: 68px;
+      height: 80px;
+      font-size: 12px;
+    }
+    #swingWrap {
+      display: none;
+    }
+    #resetBtn {
+      padding: 8px 10px;
+      font-size: 11px;
+      background: rgba(20, 31, 45, 0.85);
+    }
+    #mobileHudToggle {
+      display: flex;
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      z-index: 40;
+      background: rgba(20, 31, 45, 0.9);
+      border: 1px solid var(--panel-border);
+      color: var(--safety-yellow);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  }
+
+  @media (min-width: 881px) {
+    #mobileHudToggle {
+      display: none !important;
+    }
   }
 </style>
 </head>
+
 <body>
 <div id="app">
   <div id="loading"><div class="spin"></div><span>Loading Crane Bay&hellip;</span></div>
@@ -234,7 +336,9 @@
       <div class="stat"><div class="n" id="statScore">100</div><div class="l">Score</div></div>
       <div class="stat"><div class="n" id="statIncidents">0</div><div class="l">Flags</div></div>
     </div>
+    <button id="mobileHudToggle" onclick="document.getElementById('controls').classList.toggle('collapsed')">👁️ Controls</button>
   </div>
+
 
   <div id="controls">
     <div class="padgroup panel">

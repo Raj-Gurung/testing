@@ -507,6 +507,18 @@
       }
     }
 
+    // Close mobile menu when nav links are tapped
+    if (navLinks) {
+      navLinks.querySelectorAll('a:not(.dropdown > a)').forEach(link => {
+        link.addEventListener('click', function () {
+          if (window.innerWidth <= 880) {
+            navLinks.classList.remove('mobile-open');
+            if (toggleBtn) toggleBtn.innerHTML = '☰';
+          }
+        });
+      });
+    }
+
     // Close menu when clicking outside
     document.addEventListener('click', function (e) {
       if (navLinks && navLinks.classList.contains('mobile-open') && !navbar.contains(e.target)) {
@@ -515,6 +527,7 @@
       }
     });
   }
+
 
   // Logo Image Fallback Handler (Fixes logo image loading issue in home.html)
   function initLogoFallback() {
