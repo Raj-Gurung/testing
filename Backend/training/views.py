@@ -3,7 +3,14 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from training.models import Profile
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from training.models import Profile, QuizResult
+from training.serializers import QuizResultSerializer
+
+
 
 
 def home_view(request):
@@ -104,3 +111,23 @@ def admin_dashboard_view(request):
         messages.error(request, "Access restricted to administrators.")
         return redirect('home')
     return render(request, 'admin_dashboard.html')
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def submit_quiz_api(request):
+    try:
+        score_percent = float(request.data.get('score_percent'))
+    except (ValueError, TypeError):
+        return Response({'error': 'Invalid or missing score_percent value'}, status=status.HTTP_400_BAD_REQUEST)
+
+    passed = score_percent > 60
+    quiz_result = QuizResult.objects.create(
+        user=request.user,
+        score_percent=score_percent,
+        passed=passed
+    )
+
+    serializer = QuizResultSerializer(quiz_result)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
