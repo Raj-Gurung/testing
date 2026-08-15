@@ -227,10 +227,152 @@
     display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px;
     color:var(--panel); font-family:'JetBrains Mono',monospace;
   }
-  #loading .bar{ width:220px; height:6px; background:var(--steel-700); border-radius:3px; overflow:hidden; }
-  #loading .bar::after{ content:''; display:block; height:100%; width:40%; background:var(--safety-yellow); animation:load 1.1s ease-in-out infinite; }
-  @keyframes load{ 0%{transform:translateX(-100%);} 100%{transform:translateX(350%);} }
+  /* Mobile Forklift Touch Controls CSS (scoped to <=880px) */
+  @media (max-width: 880px) {
+    #title-block {
+      top: 6px;
+      left: 6px;
+      padding: 8px 12px;
+      max-width: 220px;
+    }
+    #title-block h1 {
+      font-size: 15px;
+    }
+    #objectives-panel {
+      display: none;
+    }
+    #controls-panel {
+      display: none !important;
+    }
+    #dash {
+      bottom: auto;
+      top: 6px;
+      right: 6px;
+      left: auto;
+      padding: 6px 10px;
+      background: rgba(27, 30, 34, 0.85);
+      backdrop-filter: blur(4px);
+    }
+    #dash .dash-cluster {
+      display: none;
+    }
+
+    #mobile-forklift-controls {
+      display: flex;
+      position: absolute;
+      bottom: 8px;
+      left: 6px;
+      right: 6px;
+      z-index: 90;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    #mobile-forklift-controls.collapsed {
+      opacity: 0.15;
+      pointer-events: none;
+      transform: translateY(60%);
+    }
+
+    .m-drive-pad, .m-center-actions, .m-fork-pad {
+      pointer-events: auto;
+      background: rgba(27, 30, 34, 0.85);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--steel-700);
+      border-radius: 10px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .m-dir-row, .m-fork-row {
+      display: flex;
+      gap: 4px;
+    }
+
+    .m-btn {
+      background: var(--steel-800);
+      border: 1px solid var(--steel-700);
+      color: #EDEFF2;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .m-btn:active, .m-btn.pressed {
+      background: var(--safety-yellow);
+      color: #12161C;
+    }
+
+    .m-btn-dir {
+      width: 42px;
+      height: 42px;
+      font-size: 16px;
+    }
+
+    .m-btn-act {
+      padding: 8px 12px;
+      min-height: 38px;
+      font-size: 11px;
+    }
+    .m-btn-belt {
+      background: rgba(214, 69, 69, 0.25);
+      color: #ff6b6b;
+      border-color: rgba(214, 69, 69, 0.5);
+    }
+    .m-btn-e {
+      background: rgba(244, 196, 48, 0.2);
+      color: var(--safety-yellow);
+      border-color: rgba(244, 196, 48, 0.5);
+    }
+
+    .m-pad-label {
+      font-size: 8px;
+      color: var(--concrete);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .m-btn-fork, .m-btn-tilt {
+      padding: 6px 8px;
+      height: 36px;
+      font-size: 10px;
+    }
+
+    #mobileForkliftHudToggle {
+      display: flex;
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 100;
+      background: rgba(27, 30, 34, 0.9);
+      border: 1px solid var(--steel-700);
+      color: var(--safety-yellow);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  }
+
+  @media (min-width: 881px) {
+    #mobile-forklift-controls, #mobileForkliftHudToggle {
+      display: none !important;
+    }
+  }
 </style>
+
 </head>
 <body>
 <div style="display:none;">{% csrf_token %}</div>
@@ -335,11 +477,43 @@
   <div class="dash-divider"></div>
   <div>
     <div id="seatbelt-indicator" class="off">SEATBELT: OFF</div>
-    <div id="tilt-indicator">MAST: LEVEL</div>
+<!-- Mobile Touch Overlay Controls for Forklift -->
+<div id="mobile-forklift-controls" class="mobile-forklift-ui">
+  <!-- Left Side: Drive D-Pad -->
+  <div class="m-drive-pad">
+    <button class="m-btn m-btn-dir" data-key="w">▲</button>
+    <div class="m-dir-row">
+      <button class="m-btn m-btn-dir" data-key="a">◄</button>
+      <button class="m-btn m-btn-dir" data-key="s">▼</button>
+      <button class="m-btn m-btn-dir" data-key="d">►</button>
+    </div>
+  </div>
+
+  <!-- Center: Quick Actions -->
+  <div class="m-center-actions">
+    <button class="m-btn m-btn-act m-btn-belt" id="m-belt-btn">🦺 BELT</button>
+    <button class="m-btn m-btn-act" id="m-horn-btn">📣 HORN</button>
+    <button class="m-btn m-btn-act m-btn-e" id="m-interact-btn">📦 LIFT/DROP (E)</button>
+  </div>
+
+  <!-- Right Side: Fork & Mast Controls -->
+  <div class="m-fork-pad">
+    <div class="m-pad-label">FORKS / MAST</div>
+    <div class="m-fork-row">
+      <button class="m-btn m-btn-fork" data-key="arrowup">▲ LIFT</button>
+      <button class="m-btn m-btn-fork" data-key="arrowdown">▼ LOWER</button>
+    </div>
+    <div class="m-fork-row">
+      <button class="m-btn m-btn-tilt" data-key="z">◤ TILT BACK</button>
+      <button class="m-btn m-btn-tilt" data-key="x">◢ TILT FWD</button>
+    </div>
   </div>
 </div>
 
+<button id="mobileForkliftHudToggle" onclick="document.getElementById('mobile-forklift-controls').classList.toggle('collapsed')">👁️ Controls</button>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
 (function(){
   "use strict";
@@ -801,6 +975,57 @@
     if(e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
   });
   window.addEventListener('keyup', e=>{ keys[e.key.toLowerCase()] = false; });
+
+  // Mobile Touch Controls Event Binding
+  function bindTouchControl(btnEl, keyName) {
+    if (!btnEl) return;
+    const startHandler = (e) => {
+      e.preventDefault();
+      keys[keyName] = true;
+      btnEl.classList.add('pressed');
+    };
+    const endHandler = (e) => {
+      e.preventDefault();
+      keys[keyName] = false;
+      btnEl.classList.remove('pressed');
+    };
+    btnEl.addEventListener('touchstart', startHandler, { passive: false });
+    btnEl.addEventListener('touchend', endHandler, { passive: false });
+    btnEl.addEventListener('touchcancel', endHandler, { passive: false });
+    btnEl.addEventListener('mousedown', startHandler);
+    btnEl.addEventListener('mouseup', endHandler);
+    btnEl.addEventListener('mouseleave', endHandler);
+  }
+
+  document.querySelectorAll('#mobile-forklift-controls .m-btn[data-key]').forEach(btn => {
+    bindTouchControl(btn, btn.getAttribute('data-key'));
+  });
+
+  const beltBtn = document.getElementById('m-belt-btn');
+  if (beltBtn) {
+    beltBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleSeatbelt();
+    });
+  }
+
+  const interactBtn = document.getElementById('m-interact-btn');
+  if (interactBtn) {
+    interactBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      tryInteract();
+    });
+  }
+
+  const hornBtn = document.getElementById('m-horn-btn');
+  if (hornBtn) {
+    hornBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      playHorn();
+      hornActiveUntil = performance.now() + 1500;
+    });
+  }
+
 
   // ======================================================================
   // Sim state
