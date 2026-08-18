@@ -260,8 +260,29 @@
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 10px;
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    scrollbar-width: thin;
+    scrollbar-color: #38485E #16202E;
+  }
+
+  .table-card::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .table-card::-webkit-scrollbar-track {
+    background: #16202E;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .table-card::-webkit-scrollbar-thumb {
+    background: #38485E;
+    border-radius: 4px;
+  }
+
+  .table-card::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
   }
 
   table {
@@ -273,20 +294,45 @@
   th {
     background: #171C24;
     color: var(--muted);
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 16px 20px;
+    letter-spacing: 0.05em;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--line);
+    white-space: nowrap;
   }
 
   td {
-    padding: 16px 20px;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--line);
-    font-size: 14px;
+    font-size: 13.5px;
     color: var(--ink);
     vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .sim-attempts-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 204, 0, 0.08);
+    border: 1px solid rgba(255, 204, 0, 0.25);
+    border-radius: 8px;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+
+  .sim-attempts-pill strong {
+    color: var(--yellow);
+    font-size: 13px;
+  }
+
+  .sim-attempts-pill .sim-breakdown {
+    font-size: 11.5px;
+    color: var(--muted);
+    display: inline-flex;
+    gap: 6px;
   }
 
   tr:last-child td {
@@ -536,6 +582,9 @@
       <button class="nav-btn active" id="tab-btn-trainees" onclick="switchTab('trainees')">
         <span>📊</span> Trainees &amp; Dashboard
       </button>
+      <button class="nav-btn" id="tab-btn-attempts" onclick="switchTab('attempts')">
+        <span>📈</span> Attempts &amp; Sim Times
+      </button>
       <button class="nav-btn" id="tab-btn-leaderboard" onclick="switchTab('leaderboard')">
         <span>🏆</span> Simulation Leaderboard
       </button>
@@ -599,8 +648,6 @@
                 <th>Role</th>
                 <th>Latest Quiz Score</th>
                 <th>Quiz Status</th>
-                <th>Crane Sim Time</th>
-                <th>Forklift Sim Time</th>
                 <th>Overall Status</th>
                 <th>Actions</th>
               </tr>
@@ -638,20 +685,6 @@
                   {% endif %}
                 </td>
                 <td>
-                  {% if t.crane_time_raw %}
-                    <span style="font-family: monospace; font-size: 14px;">⏱️ {{ t.crane_time_str }}</span>
-                  {% else %}
-                    <span style="color: var(--muted);">—</span>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if t.forklift_time_raw %}
-                    <span style="font-family: monospace; font-size: 14px;">🚜 {{ t.forklift_time_str }}</span>
-                  {% else %}
-                    <span style="color: var(--muted);">—</span>
-                  {% endif %}
-                </td>
-                <td>
                   {% if t.status_code == 'unlocked' %}
                     <span class="badge badge-passed">🟢 UNLOCKED</span>
                   {% elif t.status_code == 'quiz_passed' %}
@@ -672,7 +705,79 @@
               </tr>
               {% empty %}
               <tr>
-                <td colspan="8" style="text-align: center; color: var(--muted); padding: 30px;">No registered trainees found.</td>
+                <td colspan="6" style="text-align: center; color: var(--muted); padding: 30px;">No registered trainees found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 2: Attempt Counts & Simulation Times -->
+      <section id="view-attempts" class="view-panel">
+        <div class="filter-bar">
+          <div class="search-box">
+            <input type="text" id="attempts-search" placeholder="Search trainee by username..." oninput="applyAttemptsFilter()">
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Quiz Attempts</th>
+                <th>Crane Simulator</th>
+                <th>Forklift Simulator</th>
+                <th>Total Sim Attempts</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="attempts-tbl-body">
+              {% for t in trainees %}
+              <tr class="attempt-row" data-username="{{ t.username|lower }}">
+                <td>
+                  <strong>{{ t.username }}</strong>
+                </td>
+                <td>
+                  <span class="badge {% if t.role == 'admin' %}badge-role-admin{% else %}badge-role-user{% endif %}">
+                    {{ t.role|upper }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" style="background: rgba(91, 157, 249, 0.15); color: var(--accent); font-weight: 700; padding: 5px 12px;">
+                    {{ t.quiz_attempts }} {% if t.quiz_attempts == 1 %}attempt{% else %}attempts{% endif %}
+                  </span>
+                </td>
+                <td>
+                  {% if t.crane_time_raw %}
+                    <span style="font-family: monospace; font-size: 13.5px; font-weight: bold; color: var(--ink);">⏱️ {{ t.crane_time_str }}</span>
+                    <span style="font-size: 12px; color: var(--muted); margin-left: 4px;">({{ t.crane_attempts }} {% if t.crane_attempts == 1 %}run{% else %}runs{% endif %})</span>
+                  {% else %}
+                    <span style="color: var(--muted);">— ({{ t.crane_attempts }} runs)</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if t.forklift_time_raw %}
+                    <span style="font-family: monospace; font-size: 13.5px; font-weight: bold; color: var(--ink);">🚜 {{ t.forklift_time_str }}</span>
+                    <span style="font-size: 12px; color: var(--muted); margin-left: 4px;">({{ t.forklift_attempts }} {% if t.forklift_attempts == 1 %}run{% else %}runs{% endif %})</span>
+                  {% else %}
+                    <span style="color: var(--muted);">— ({{ t.forklift_attempts }} runs)</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <span class="badge" style="background: rgba(255, 204, 0, 0.2); color: var(--yellow); font-weight: 700; padding: 5px 12px;">
+                    {{ t.sim_attempts }} total {% if t.sim_attempts == 1 %}run{% else %}runs{% endif %}
+                  </span>
+                </td>
+                <td>
+                  <button class="btn-tbl btn-tbl-detail" onclick="openDetailModal({{ t.id }})">View History</button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--muted); padding: 30px;">No registered trainees found.</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -841,11 +946,27 @@
       document.getElementById('view-trainees').classList.add('active');
       document.getElementById('tab-btn-trainees').classList.add('active');
       document.getElementById('page-title').textContent = 'Trainees Directory & Status';
+    } else if (tabName === 'attempts') {
+      document.getElementById('view-attempts').classList.add('active');
+      document.getElementById('tab-btn-attempts').classList.add('active');
+      document.getElementById('page-title').textContent = 'Trainee Attempt Counts & Activity Stats';
     } else if (tabName === 'leaderboard') {
       document.getElementById('view-leaderboard').classList.add('active');
       document.getElementById('tab-btn-leaderboard').classList.add('active');
       document.getElementById('page-title').textContent = 'Simulation Speed Leaderboard';
     }
+  }
+
+  function applyAttemptsFilter() {
+    const searchVal = document.getElementById('attempts-search').value.toLowerCase().trim();
+    document.querySelectorAll('.attempt-row').forEach(row => {
+      const username = row.dataset.username || '';
+      if (!searchVal || username.includes(searchVal)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
   }
 
   function applyFilters() {
@@ -938,10 +1059,23 @@
           simHtml = '<div style="color: var(--muted); font-size: 13px;">No simulation runs recorded.</div>';
         }
 
+        const quizCount = data.quiz_attempts_count !== undefined ? data.quiz_attempts_count : data.quiz_results.length;
+        const simCount = data.sim_attempts_count !== undefined ? data.sim_attempts_count : data.simulation_results.length;
+        const craneCount = data.crane_attempts_count !== undefined ? data.crane_attempts_count : data.simulation_results.filter(s => s.simulator_type === 'crane').length;
+        const forkliftCount = data.forklift_attempts_count !== undefined ? data.forklift_attempts_count : data.simulation_results.filter(s => s.simulator_type === 'forklift').length;
+
         bodyEl.innerHTML = `
           <div style="margin-bottom: 16px;">
             <div style="font-size: 16px; font-weight: bold;">${data.username}</div>
-            <div style="font-size: 13px; color: var(--muted);">Joined: ${data.date_joined} | Role: ${data.role.toUpperCase()}</div>
+            <div style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Joined: ${data.date_joined} | Role: ${data.role.toUpperCase()}</div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <div style="background: var(--panel-card); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; font-size: 13px;">
+                <span style="color: var(--muted);">Quiz Attempts:</span> <strong style="color: var(--accent);">${quizCount}</strong>
+              </div>
+              <div style="background: var(--panel-card); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; font-size: 13px;">
+                <span style="color: var(--muted);">Simulation Attempts:</span> <strong style="color: var(--yellow);">${simCount}</strong> <span style="color: var(--muted); font-size: 12px;">(🏗️ ${craneCount} Crane, 🚜 ${forkliftCount} Forklift)</span>
+              </div>
+            </div>
           </div>
           <div class="history-section">
             <h4>Quiz History (${data.quiz_results.length})</h4>

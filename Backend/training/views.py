@@ -14,6 +14,14 @@ from training.serializers import QuizResultSerializer, SimulationResultSerialize
 
 
 
+def landing_view(request):
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'profile') and request.user.profile.role == 'admin':
+            return redirect('admin_dashboard')
+        return redirect('home')
+    return render(request, 'landing.html')
+
+
 def home_view(request):
     return render(request, 'home.html')
 
@@ -119,14 +127,19 @@ def admin_dashboard_view(request):
         latest_quiz = u.quiz_results.order_by('-taken_at').first()
         quiz_score = latest_quiz.score_percent if latest_quiz else None
         quiz_passed = latest_quiz.passed if latest_quiz else None
+        quiz_attempts = u.quiz_results.count()
 
         crane_sims = u.simulation_results.filter(simulator_type='crane')
         crane_best = crane_sims.order_by('time_taken_seconds').first()
         crane_time = crane_best.time_taken_seconds if crane_best else None
+        crane_attempts = crane_sims.count()
 
         forklift_sims = u.simulation_results.filter(simulator_type='forklift')
         forklift_best = forklift_sims.order_by('time_taken_seconds').first()
         forklift_time = forklift_best.time_taken_seconds if forklift_best else None
+        forklift_attempts = forklift_sims.count()
+
+        sim_attempts = crane_attempts + forklift_attempts
 
         if quiz_passed and crane_time is not None and forklift_time is not None:
             overall_status = 'Fully Unlocked'
@@ -151,10 +164,14 @@ def admin_dashboard_view(request):
             'role': u.profile.role if hasattr(u, 'profile') else 'user',
             'quiz_score': round(quiz_score, 1) if quiz_score is not None else None,
             'quiz_passed': quiz_passed,
+            'quiz_attempts': quiz_attempts,
             'crane_time_raw': crane_time,
             'crane_time_str': crane_str,
+            'crane_attempts': crane_attempts,
             'forklift_time_raw': forklift_time,
             'forklift_time_str': forklift_str,
+            'forklift_attempts': forklift_attempts,
+            'sim_attempts': sim_attempts,
             'overall_status': overall_status,
             'status_code': status_code,
             'date_joined': u.date_joined.strftime('%Y-%m-%d'),
@@ -199,12 +216,19 @@ def admin_user_detail_api(request, user_id):
     quiz_results = QuizResultSerializer(user_obj.quiz_results.all().order_by('-taken_at'), many=True).data
     sim_results = SimulationResultSerializer(user_obj.simulation_results.all().order_by('-completed_at'), many=True).data
 
+    crane_count = user_obj.simulation_results.filter(simulator_type='crane').count()
+    forklift_count = user_obj.simulation_results.filter(simulator_type='forklift').count()
+
     return Response({
         'id': user_obj.id,
         'username': user_obj.username,
         'email': user_obj.email,
         'role': user_obj.profile.role if hasattr(user_obj, 'profile') else 'user',
         'date_joined': user_obj.date_joined.strftime('%Y-%m-%d %H:%M'),
+        'quiz_attempts_count': len(quiz_results),
+        'sim_attempts_count': len(sim_results),
+        'crane_attempts_count': crane_count,
+        'forklift_attempts_count': forklift_count,
         'quiz_results': quiz_results,
         'simulation_results': sim_results,
     })
