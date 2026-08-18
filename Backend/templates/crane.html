@@ -691,15 +691,14 @@
   trolley.position.set(0, BRIDGE_HEIGHT, 0);
   gantry.add(trolley);
 
-  // cable (solid cylinder, re-oriented each frame — a thin Line is nearly
-  // invisible against a dark background, so the hoist rope is a real mesh)
-  var cableMat = new THREE.MeshStandardMaterial({ color: 0xD8DEE4, metalness: 0.35, roughness: 0.45, emissive: 0x30343a, emissiveIntensity: 0.3 });
+  // cable (solid cylinder, re-oriented each frame — spans from trolley down to hook)
+  var cableMat = new THREE.MeshStandardMaterial({ color: 0xF0F4F8, metalness: 0.35, roughness: 0.35, emissive: 0x606874, emissiveIntensity: 0.45 });
   var cableGeo = new THREE.CylinderGeometry(1, 1, 1, 8, 1, false);
   cableGeo.translate(0, 0.5, 0); // pivot at the top end so scale.y = length works from the anchor point
   var cable = new THREE.Mesh(cableGeo, cableMat);
   cable.castShadow = true;
   scene.add(cable);
-  var CABLE_RADIUS = 0.055;
+  var CABLE_RADIUS = 0.08;
   var cableUp = new THREE.Vector3(0, 1, 0);
   var cableDirTmp = new THREE.Vector3();
   function updateCable(topVec, bottomVec){
@@ -713,11 +712,11 @@
   // hook
   var hookGroup = new THREE.Group();
   var hookMat = new THREE.MeshStandardMaterial({ color: 0xB9C2CB, metalness:0.75, roughness:0.3 });
-  var hookTorus = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.045, 8, 16, Math.PI*1.5), hookMat);
+  var hookTorus = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.052, 8, 16, Math.PI*1.5), hookMat);
   hookTorus.rotation.x = Math.PI/2;
   hookGroup.add(hookTorus);
-  var hookBlock = new THREE.Mesh(new THREE.BoxGeometry(0.18,0.18,0.18), hookMat);
-  hookBlock.position.y = 0.16;
+  var hookBlock = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.20, 0.24), hookMat);
+  hookBlock.position.y = 0.17;
   hookGroup.add(hookBlock);
   scene.add(hookGroup);
 
@@ -1040,12 +1039,15 @@
     // ---- render sync ----
     gantry.position.x = state.gantryX;
     trolley.position.z = state.trolleyZ;
-    hookGroup.position.set(hp.x, hp.y - HOOK_OFFSET, hp.z);
+    var hookX = hp.x + (state.attached ? state.swingX : 0);
+    var hookZ = hp.z + (state.attached ? state.swingZ : 0);
+    var hookY = hp.y - HOOK_OFFSET;
+    hookGroup.position.set(hookX, hookY, hookZ);
     crateGroup.position.copy(state.cratePos);
     crateGroup.rotation.y += (state.attached ? (state.swingX*0.06) : 0) * dt * 4;
 
-    var cableTop = new THREE.Vector3(hp.x, hp.y, hp.z);
-    var cableBottom = new THREE.Vector3(hookGroup.position.x, hookGroup.position.y + 0.2, hookGroup.position.z);
+    var cableTop = new THREE.Vector3(state.gantryX, BRIDGE_HEIGHT - 0.25, state.trolleyZ);
+    var cableBottom = new THREE.Vector3(hookGroup.position.x, hookGroup.position.y + 0.17, hookGroup.position.z);
     updateCable(cableTop, cableBottom);
 
     // ---- HUD ----
