@@ -1034,19 +1034,7 @@
     }
     objectiveText.textContent = currentObjective();
 
-    // ---- render sync ----
-    gantry.position.x = state.gantryX;
-    trolley.position.z = state.trolleyZ;
-    var hookX = hp.x + (state.attached ? state.swingX : 0);
-    var hookZ = hp.z + (state.attached ? state.swingZ : 0);
-    var hookY = hp.y - HOOK_OFFSET;
-    hookGroup.position.set(hookX, hookY, hookZ);
-    crateGroup.position.copy(state.cratePos);
-    crateGroup.rotation.y += (state.attached ? (state.swingX*0.06) : 0) * dt * 4;
-
-    var cableTop = new THREE.Vector3(state.gantryX, BRIDGE_HEIGHT - 0.25, state.trolleyZ);
-    var cableBottom = new THREE.Vector3(hookGroup.position.x, hookGroup.position.y + 0.17, hookGroup.position.z);
-    updateCable(cableTop, cableBottom);
+    renderSync(dt);
 
     // ---- HUD ----
     var mm = Math.floor(state.elapsed/60), ss = Math.floor(state.elapsed%60);
@@ -1060,6 +1048,24 @@
     swingFill.style.width = (4 + pct*10).toFixed(1)+'px';
     swingFill.style.background = mag > SWING_DANGER ? '#E23B3B' : mag > SWING_WARN ? '#E8590C' : '#2BAE66';
     swingLabel.textContent = (mag > SWING_DANGER ? 'DANGER' : mag > SWING_WARN ? 'CAUTION' : 'STABLE') + ' \u00b7 ' + mag.toFixed(2);
+  }
+
+  function renderSync(dt){
+    var hp = hookWorldPos();
+    gantry.position.x = state.gantryX;
+    trolley.position.z = state.trolleyZ;
+    var hookX = hp.x + (state.attached ? state.swingX : 0);
+    var hookZ = hp.z + (state.attached ? state.swingZ : 0);
+    var hookY = hp.y - HOOK_OFFSET;
+    hookGroup.position.set(hookX, hookY, hookZ);
+    crateGroup.position.copy(state.cratePos);
+    if(dt){
+      crateGroup.rotation.y += (state.attached ? (state.swingX*0.06) : 0) * dt * 4;
+    }
+
+    var cableTop = new THREE.Vector3(state.gantryX, BRIDGE_HEIGHT - 0.25, state.trolleyZ);
+    var cableBottom = new THREE.Vector3(hookGroup.position.x, hookGroup.position.y + 0.17, hookGroup.position.z);
+    updateCable(cableTop, cableBottom);
   }
 
   function finishSim(success){
@@ -1113,6 +1119,7 @@
     state.log = [];
     toastsEl.innerHTML = '';
     document.getElementById('endOverlay').style.display = 'none';
+    renderSync(0);
   }
 
   /* ============================================================
@@ -1126,6 +1133,7 @@
     renderer.render(scene, camera);
   }
 
+  renderSync(0);
   document.getElementById('loading').style.display = 'none';
   animate();
 })();
