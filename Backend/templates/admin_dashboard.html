@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard — Nexsus Logistics</title>
 <link rel="stylesheet" href="/static/css/style.css">
+<script>
+  (function(){
+    var t = localStorage.getItem('nexsus_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
 <style>
   :root {
     --bg-dark: #12161C;
@@ -18,6 +24,49 @@
     --success: #2BAE66;
     --danger: #E8590C;
     --warning: #F5B700;
+  }
+
+  [data-theme="light"] {
+    --bg-dark: #F4F6FB;
+    --panel: #FFFFFF;
+    --panel-card: #FFFFFF;
+    --ink: #0F172A;
+    --muted: #475569;
+    --line: #E2E8F0;
+    --accent: #2563EB;
+    --accent-soft: rgba(37, 99, 235, 0.1);
+    --success: #16A34A;
+    --danger: #EA580C;
+    --warning: #D97706;
+  }
+
+  [data-theme="light"] .admin-table th {
+    background: #F8FAFC;
+    color: #475569;
+    border-bottom: 2px solid #E2E8F0;
+  }
+
+  [data-theme="light"] .admin-table tr:hover td {
+    background-color: rgba(37, 99, 235, 0.04);
+  }
+
+  [data-theme="light"] .search-box input,
+  [data-theme="light"] .filter-select {
+    background: #FFFFFF;
+    border-color: #CBD5E1;
+    color: #0F172A;
+  }
+
+  [data-theme="light"] .modal-content {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  [data-theme="light"] .stat-card {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   }
 
   * {
@@ -62,6 +111,8 @@
   .sidebar-header img {
     width: 38px;
     height: 38px;
+    object-fit: contain;
+    display: block;
   }
 
   .brand-text h2 {
@@ -605,7 +656,12 @@
   <main class="admin-main">
     <header class="top-header">
       <h1 id="page-title">Trainees Directory &amp; Status</h1>
-      <span class="badge badge-role-admin">Admin Authenticated</span>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="theme-toggle-btn" id="theme-toggle-btn-admin" aria-label="Toggle Light/Dark Theme" title="Toggle Light/Dark Theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <span class="badge badge-role-admin">Admin Authenticated</span>
+      </div>
     </header>
 
     <div class="content-area">
@@ -1165,5 +1221,6 @@
     });
   }
 </script>
+<script src="/static/javascript/main.js"></script>
 </body>
 </html>

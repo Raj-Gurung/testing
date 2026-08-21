@@ -65,6 +65,8 @@ def signup_view(request):
 
         if not username or not password:
             error = "Please enter both username and password."
+        elif len(username) > 10:
+            error = "Username must not exceed 10 characters."
         elif password != confirm_password:
             error = "Passwords do not match."
         elif User.objects.filter(username=username).exists():

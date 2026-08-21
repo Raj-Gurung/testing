@@ -10,11 +10,76 @@
   const STORAGE_KEYS = {
     GUIDELINES_READ: 'nexsus_guidelines_read',
     QUIZ_PASSED: 'nexsus_quiz_passed',
-    QUIZ_SCORE: 'nexsus_quiz_score'
+    QUIZ_SCORE: 'nexsus_quiz_score',
+    THEME: 'nexsus_theme'
   };
+
+  // Immediate theme execution to prevent flashing
+  (function () {
+    try {
+      const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      if (document.body) {
+        document.body.setAttribute('data-theme', savedTheme);
+      }
+    } catch (e) {}
+  })();
 
   // State Manager
   window.NexsusState = {
+    getTheme: function () {
+      try {
+        return localStorage.getItem(STORAGE_KEYS.THEME) || 'dark';
+      } catch (e) {
+        return 'dark';
+      }
+    },
+
+    setTheme: function (theme) {
+      try {
+        localStorage.setItem(STORAGE_KEYS.THEME, theme);
+      } catch (e) {}
+      this.applyTheme(theme);
+    },
+
+    toggleTheme: function () {
+      const current = this.getTheme();
+      const next = current === 'light' ? 'dark' : 'light';
+      this.setTheme(next);
+      return next;
+    },
+
+    applyTheme: function (theme) {
+      const activeTheme = theme || this.getTheme();
+      document.documentElement.setAttribute('data-theme', activeTheme);
+      if (document.body) {
+        document.body.setAttribute('data-theme', activeTheme);
+      }
+
+      // Update all toggle buttons on the page
+      const isLight = activeTheme === 'light';
+      const iconChar = isLight ? '☀️' : '🌙';
+      const labelText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+
+      document.querySelectorAll('.theme-toggle-btn, #theme-toggle-btn, #theme-toggle-btn-nav, #theme-toggle-btn-admin').forEach(btn => {
+        const iconSpan = btn.querySelector('.theme-icon');
+        if (iconSpan) {
+          iconSpan.textContent = iconChar;
+        } else {
+          // If no inner span, check text content
+          if (btn.childNodes.length === 1 && btn.childNodes[0].nodeType === 3) {
+            btn.textContent = iconChar;
+          }
+        }
+        const labelSpan = btn.querySelector('.theme-label');
+        if (labelSpan) {
+          labelSpan.textContent = labelText;
+        }
+        btn.setAttribute('title', isLight ? 'Switch to Dark Theme' : 'Switch to Light Theme');
+        btn.setAttribute('aria-label', isLight ? 'Switch to Dark Theme' : 'Switch to Light Theme');
+      });
+    },
+
     isGuidelinesRead: function () {
       return localStorage.getItem(STORAGE_KEYS.GUIDELINES_READ) === 'true';
     },
@@ -559,8 +624,22 @@
     });
   }
 
+  // Initialize Theme Toggle event listeners
+  function initTheme() {
+    window.NexsusState.applyTheme();
+
+    document.addEventListener('click', function (e) {
+      const toggleBtn = e.target.closest('.theme-toggle-btn, #theme-toggle-btn, #theme-toggle-btn-nav, #theme-toggle-btn-admin, #theme-toggle-btn-drawer');
+      if (toggleBtn) {
+        e.preventDefault();
+        window.NexsusState.toggleTheme();
+      }
+    });
+  }
+
   // Initialize on DOM Ready
   function init() {
+    initTheme();
     injectStyles();
     initMobileMenu();
     initLogoFallback();

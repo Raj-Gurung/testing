@@ -5,7 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create Account — Nexsus Logistics</title>
 <link rel="stylesheet" href="/static/css/style.css">
+<script>
+  (function(){
+    var t = localStorage.getItem('nexsus_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
 <style>
+  [data-theme="light"] .auth-card {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  [data-theme="light"] .form-control {
+    background: #FFFFFF;
+    border-color: #CBD5E1;
+    color: #0F172A;
+  }
+  [data-theme="light"] .btn-submit {
+    color: #FFFFFF;
+  }
+
   main {
     max-width: 480px;
     margin: 50px auto 80px auto;
@@ -111,6 +131,13 @@
     </div>
   </a>
 
+  <div class="navbar-right-controls">
+    <button class="theme-toggle-btn" id="theme-toggle-btn-nav" aria-label="Toggle Light/Dark Theme" title="Toggle Light/Dark Theme">
+      <span class="theme-icon">🌙</span>
+    </button>
+    <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Menu">☰</button>
+  </div>
+
   <ul class="nav-links">
     <li><a href="/home/">Home</a></li>
     <li><a href="/about/">About</a></li>
@@ -126,6 +153,12 @@
     <li><a href="/contact/">Contact</a></li>
     <li><a href="/login/">Login</a></li>
     <li><a href="/signup/" class="active">Sign Up</a></li>
+
+    <li class="mobile-theme-item">
+      <button class="theme-toggle-btn mobile-theme-link" id="theme-toggle-btn-drawer">
+        <span class="theme-icon">🌙</span> <span class="theme-label">Switch to Light Mode</span>
+      </button>
+    </li>
   </ul>
 </nav>
 
@@ -142,12 +175,16 @@
       </div>
     {% endif %}
 
-    <form method="POST" action="/signup/">
+    <form method="POST" action="/signup/" id="signup-form">
       {% csrf_token %}
 
       <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" class="form-control" placeholder="Choose a username" required autofocus>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label for="username" style="margin-bottom: 0;">Username</label>
+          <span id="user-char-count" style="font-size: 12px; color: var(--muted);">0 / 10 max</span>
+        </div>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Choose a username (max 10 chars)" maxlength="10" required autofocus oninput="updateCharCount(this)">
+        <small id="user-limit-msg" style="display: none; color: var(--danger); font-size: 12px; margin-top: 4px;">Username cannot exceed 10 characters.</small>
       </div>
 
       <div class="form-group">
@@ -168,6 +205,21 @@
     </div>
   </div>
 </main>
+
+<script>
+  function updateCharCount(input) {
+    var count = input.value.length;
+    var countEl = document.getElementById('user-char-count');
+    var msgEl = document.getElementById('user-limit-msg');
+    if (countEl) countEl.textContent = count + ' / 10 max';
+    if (count >= 10) {
+      if (countEl) countEl.style.color = 'var(--yellow)';
+    } else {
+      if (countEl) countEl.style.color = 'var(--muted)';
+      if (msgEl) msgEl.style.display = 'none';
+    }
+  }
+</script>
 
 <footer>
   &copy; 2026 Nexsus Logistics &amp; Warehousing Company &middot; Joint Venture Training Programme

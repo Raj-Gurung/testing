@@ -5,19 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About — Northbridge Logistics</title>
 <link rel="stylesheet" href="./css/style.css">
+<script>
+  (function(){
+    var t = localStorage.getItem('nexsus_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --navy:#101A2B;
-    --navy-2:#16223A;
-    --concrete:#ECE9E1;
-    --concrete-2:#DDD8CC;
-    --orange:#E15B0F;
-    --steel:#4A6274;
-    --line-dark: rgba(236,233,225,0.14);
-    --line-light: rgba(16,26,43,0.12);
+  :root, [data-theme="dark"] {
+    --navy: #EDEFF2;
+    --navy-2: #171C24;
+    --concrete: #12161C;
+    --concrete-2: #1C232E;
+    --orange: #E15B0F;
+    --steel: #98A2B0;
+    --text-muted-custom: #A0AEC0;
+    --line-dark: rgba(255,255,255,0.12);
+    --line-light: rgba(255,255,255,0.08);
+    --hero-bg: #101A2B;
+    --hero-fg: #ECE9E1;
+  }
+  [data-theme="light"] {
+    --navy: #101A2B;
+    --navy-2: #FFFFFF;
+    --concrete: #F4F6FB;
+    --concrete-2: #E8EDF5;
+    --orange: #D9480F;
+    --steel: #4A6274;
+    --text-muted-custom: #3B4A5C;
+    --line-dark: rgba(16,26,43,0.15);
+    --line-light: rgba(16,26,43,0.08);
+    --hero-bg: #152238;
+    --hero-fg: #F8FAFC;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -47,69 +69,7 @@
   .eyebrow::before{content:""; width:22px; height:2px; background:var(--orange); display:inline-block;}
   section{padding:clamp(60px,8vw,110px) clamp(24px,6vw,96px); max-width:1280px; margin:0 auto;}
 
-  /* ===== NAVBAR ===== */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #1f1f1f;
-    padding: 15px 40px;
-  }
-  .logo {
-    width: 50px;
-    height: 50px;
-  }
-  .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-    align-items: center;
-  }
-  .nav-links li {
-    position: relative;
-  }
-  .nav-links a {
-    text-decoration: none;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    padding: 10px 5px;
-    display: block;
-  }
-  .nav-links > li > a:hover {
-    color: #ffcc00;
-  }
-  .nav-links > li > a.active {
-    color: #ffcc00;
-  }
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #2b2b2b;
-    min-width: 180px;
-    border-radius: 4px;
-    overflow: hidden;
-    z-index: 10;
-  }
-  .dropdown-content li {
-    width: 100%;
-  }
-  .dropdown-content a {
-    padding: 12px 16px;
-    color: #fff;
-  }
-  .dropdown-content a:hover {
-    background-color: #3d3d3d;
-  }
-  .dropdown:hover .dropdown-content {
-    display: block;
-  }
-  .dropdown > a::after {
-    content: " ▾";
-    font-size: 12px;
-  }
+
 
   /* ===== HERO (compact) ===== */
   .hero{
@@ -297,6 +257,13 @@
     </div>
   </a>
 
+  <div class="navbar-right-controls">
+    <button class="theme-toggle-btn" id="theme-toggle-btn-nav" aria-label="Toggle Light/Dark Theme" title="Toggle Light/Dark Theme">
+      <span class="theme-icon">🌙</span>
+    </button>
+    <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Menu">☰</button>
+  </div>
+
   <ul class="nav-links">
     <li><a href="./home.html">Home</a></li>
     <li><a href="./about.html" class="active">About</a></li>
@@ -310,6 +277,12 @@
       </ul>
     </li>
     <li><a href="./contact.html">Contact</a></li>
+
+    <li class="mobile-theme-item">
+      <button class="theme-toggle-btn mobile-theme-link" id="theme-toggle-btn-drawer">
+        <span class="theme-icon">🌙</span> <span class="theme-label">Switch to Light Mode</span>
+      </button>
+    </li>
   </ul>
 </nav>
 
