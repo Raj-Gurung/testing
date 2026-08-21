@@ -28,7 +28,9 @@
     --accent-soft: #1B2536;
   }
 
-  [data-theme="light"] {
+  [data-theme="light"],
+  :root[data-theme="light"],
+  body[data-theme="light"] {
     --bg-page: #F4F6FB;
     --panel: #FFFFFF;
     --ink: #0F172A;
@@ -38,7 +40,8 @@
     --accent-soft: rgba(37, 99, 235, 0.1);
   }
 
-  [data-theme="light"] .btn {
+  [data-theme="light"] .btn,
+  body[data-theme="light"] .btn {
     color: #FFFFFF;
   }
 

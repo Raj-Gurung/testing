@@ -257,6 +257,8 @@ def admin_user_edit_api(request, user_id):
 
     if new_username and new_username.strip():
         clean_name = new_username.strip()
+        if len(clean_name) > 10:
+            return Response({'error': 'Username must not exceed 10 characters.'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(username=clean_name).exclude(id=user_obj.id).exists():
             return Response({'error': f"Username '{clean_name}' is already taken."}, status=status.HTTP_400_BAD_REQUEST)
         user_obj.username = clean_name

@@ -4,11 +4,14 @@
 <meta charset="UTF-8" />
 <title>Forklift Operator Training — Prototype</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  document.documentElement.setAttribute('data-theme', 'dark');
+</script>
 <script src="./javascript/main.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-  :root{
+  :root, [data-theme="dark"]{
     --steel-900:#1b1e22;
     --steel-800:#2a2e34;
     --steel-700:#3d4148;
@@ -19,6 +22,109 @@
     --signal-red:#d64545;
     --panel:#edeae2;
     --ok-green:#4caf6b;
+    --bg-sim: #000000;
+  }
+
+  [data-theme="light"] {
+    --steel-900:#FFFFFF;
+    --steel-800:#F1F5F9;
+    --steel-700:#CBD5E1;
+    --concrete:#64748B;
+    --safety-yellow:#D97706;
+    --hazard-black:#0F172A;
+    --forklift-orange:#EA580C;
+    --signal-red:#DC2626;
+    --panel:#0F172A;
+    --ok-green:#16A34A;
+    --bg-sim: #E2E8F0;
+  }
+
+  [data-theme="light"] html, [data-theme="light"] body {
+    background: #E2E8F0;
+    color: #0F172A;
+  }
+
+  [data-theme="light"] .screen {
+    background: radial-gradient(circle at 50% 20%, #F8FAFC, #E2E8F0 75%);
+    color: #0F172A;
+  }
+
+  [data-theme="light"] .card {
+    background: #FFFFFF;
+    border-color: #CBD5E1;
+    box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    color: #0F172A;
+  }
+
+  [data-theme="light"] .card-body h1,
+  [data-theme="light"] #title-block h1 {
+    color: #0F172A;
+    text-shadow: none;
+  }
+
+  [data-theme="light"] .card-body p {
+    color: #475569;
+  }
+
+  [data-theme="light"] .checklist li {
+    background: #F8FAFC;
+    border-color: #E2E8F0;
+  }
+
+  [data-theme="light"] .checklist li:hover {
+    border-color: #CBD5E1;
+    background: #F1F5F9;
+  }
+
+  [data-theme="light"] .check-box {
+    background: #FFFFFF;
+    border-color: #94A3B8;
+  }
+
+  [data-theme="light"] .check-text b {
+    color: #0F172A;
+  }
+
+  [data-theme="light"] .check-text span {
+    color: #475569;
+  }
+
+  [data-theme="light"] #objectives-panel,
+  [data-theme="light"] #controls-panel,
+  [data-theme="light"] #dash,
+  [data-theme="light"] .m-drive-pad,
+  [data-theme="light"] .m-center-actions,
+  [data-theme="light"] .m-fork-pad {
+    background: rgba(255, 255, 255, 0.94);
+    border-color: #CBD5E1;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  }
+
+  [data-theme="light"] .obj-row,
+  [data-theme="light"] .key-row {
+    color: #334155;
+  }
+
+  [data-theme="light"] .obj-row.active {
+    color: #0F172A;
+  }
+
+  [data-theme="light"] kbd,
+  [data-theme="light"] .m-btn {
+    background: #F1F5F9;
+    color: #0F172A;
+    border-color: #CBD5E1;
+  }
+
+  [data-theme="light"] .m-btn:hover {
+    background: #E2E8F0;
+  }
+
+  [data-theme="light"] .theme-toggle-btn,
+  [data-theme="light"] .exit-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #CBD5E1;
+    color: #0F172A;
   }
   *{ box-sizing:border-box; }
   html,body{
@@ -124,8 +230,59 @@
   .obj-row.done{ color:#7c8078; }
   .obj-row.done .obj-dot{ background:var(--ok-green); border-color:var(--ok-green); color:#0d1a12; }
 
+  .top-nav-bar {
+    position: fixed;
+    top: 18px;
+    right: 22px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+  }
+  .theme-toggle-btn {
+    background: rgba(27, 30, 34, 0.85);
+    border: 1px solid #4a4e55;
+    color: var(--panel);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  .theme-toggle-btn:hover {
+    border-color: var(--safety-yellow);
+    transform: translateY(-1px);
+  }
+  .exit-btn {
+    background: rgba(27, 30, 34, 0.85);
+    color: var(--panel);
+    border: 1px solid #4a4e55;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+  }
+  .exit-btn:hover {
+    background: var(--forklift-orange);
+    color: #fff;
+    border-color: var(--forklift-orange);
+    transform: translateY(-1px);
+  }
+
   #controls-panel{
-    top:22px; right:22px; width:225px;
+    top:64px; right:22px; width:225px;
     background:linear-gradient(180deg, var(--steel-800), var(--steel-900));
     border:1px solid #4a4e55; border-radius:6px; box-shadow:0 8px 24px rgba(0,0,0,.5);
   }
@@ -436,6 +593,11 @@
       <button class="btn secondary" id="btn-review" style="margin-left:8px;">Keep Exploring</button>
     </div>
   </div>
+</div>
+
+<!-- Top Quick Controls (Home Exit) -->
+<div class="top-nav-bar">
+  <a href="home.html" class="exit-btn" title="Return to Training Home">✕ Exit Sim</a>
 </div>
 
 <!-- ===== In-sim HUD ===== -->

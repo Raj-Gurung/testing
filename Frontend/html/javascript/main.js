@@ -52,8 +52,13 @@
     applyTheme: function (theme) {
       const activeTheme = theme || this.getTheme();
       document.documentElement.setAttribute('data-theme', activeTheme);
+      document.documentElement.classList.remove('theme-dark', 'theme-light');
+      document.documentElement.classList.add('theme-' + activeTheme);
+
       if (document.body) {
         document.body.setAttribute('data-theme', activeTheme);
+        document.body.classList.remove('theme-dark', 'theme-light');
+        document.body.classList.add('theme-' + activeTheme);
       }
 
       // Update all toggle buttons on the page
@@ -61,7 +66,7 @@
       const iconChar = isLight ? '☀️' : '🌙';
       const labelText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
 
-      document.querySelectorAll('.theme-toggle-btn, #theme-toggle-btn, #theme-toggle-btn-nav, #theme-toggle-btn-admin').forEach(btn => {
+      document.querySelectorAll('.theme-toggle-btn, [data-action="toggle-theme"], #theme-toggle-btn, #theme-toggle-btn-nav, #theme-toggle-btn-admin, #theme-toggle-btn-drawer').forEach(btn => {
         const iconSpan = btn.querySelector('.theme-icon');
         if (iconSpan) {
           iconSpan.textContent = iconChar;
@@ -629,13 +634,21 @@
     window.NexsusState.applyTheme();
 
     document.addEventListener('click', function (e) {
-      const toggleBtn = e.target.closest('.theme-toggle-btn, #theme-toggle-btn, #theme-toggle-btn-nav, #theme-toggle-btn-admin, #theme-toggle-btn-drawer');
+      const toggleBtn = e.target.closest('.theme-toggle-btn, [data-action="toggle-theme"], #theme-toggle-btn, #theme-toggle-btn-nav, #theme-toggle-btn-admin, #theme-toggle-btn-drawer');
       if (toggleBtn) {
         e.preventDefault();
+        e.stopPropagation();
         window.NexsusState.toggleTheme();
       }
-    });
+    }, true);
   }
+
+  // Global helper for inline handlers or direct calls
+  window.toggleTheme = function() {
+    if (window.NexsusState) {
+      return window.NexsusState.toggleTheme();
+    }
+  };
 
   // Initialize on DOM Ready
   function init() {
