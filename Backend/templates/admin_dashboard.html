@@ -5,14 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard — Nexsus Logistics</title>
 <link rel="stylesheet" href="/static/css/style.css">
-<script>
-  (function(){
-    var t = localStorage.getItem('nexsus_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', t);
-  })();
-</script>
 <style>
-  :root, [data-theme="dark"] {
+  :root {
     --bg-dark: #12161C;
     --panel: #171C24;
     --panel-card: #1C232E;
@@ -24,79 +18,6 @@
     --success: #2BAE66;
     --danger: #E8590C;
     --warning: #F5B700;
-  }
-
-  [data-theme="light"],
-  :root[data-theme="light"],
-  body[data-theme="light"] {
-    --bg-dark: #F4F6FB;
-    --panel: #FFFFFF;
-    --panel-card: #FFFFFF;
-    --ink: #0F172A;
-    --muted: #475569;
-    --line: #E2E8F0;
-    --accent: #2563EB;
-    --accent-soft: rgba(37, 99, 235, 0.1);
-    --success: #16A34A;
-    --danger: #EA580C;
-    --warning: #D97706;
-  }
-
-  [data-theme="light"] .admin-sidebar,
-  [data-theme="light"] .top-header,
-  [data-theme="light"] .filter-bar,
-  [data-theme="light"] .table-card {
-    background: #FFFFFF;
-    border-color: #E2E8F0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  }
-
-  [data-theme="light"] th {
-    background: #F8FAFC !important;
-    color: #475569 !important;
-    border-bottom: 2px solid #E2E8F0 !important;
-  }
-
-  [data-theme="light"] td {
-    color: #0F172A !important;
-    border-bottom: 1px solid #E2E8F0 !important;
-  }
-
-  [data-theme="light"] tr:hover td {
-    background-color: rgba(37, 99, 235, 0.04) !important;
-  }
-
-  [data-theme="light"] .search-box input,
-  [data-theme="light"] .filter-select,
-  [data-theme="light"] .form-control {
-    background: #FFFFFF !important;
-    border-color: #CBD5E1 !important;
-    color: #0F172A !important;
-  }
-
-  [data-theme="light"] .modal-card {
-    background: #FFFFFF !important;
-    border-color: #E2E8F0 !important;
-    color: #0F172A !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
-  }
-
-  [data-theme="light"] .history-item {
-    background: #F8FAFC !important;
-    border-color: #E2E8F0 !important;
-    color: #0F172A !important;
-  }
-
-  [data-theme="light"] .theme-toggle-btn {
-    background: #F1F5F9;
-    border-color: #CBD5E1;
-    color: #0F172A;
-  }
-
-  [data-theme="light"] .theme-toggle-btn:hover {
-    background: #E2E8F0;
-    border-color: var(--accent);
-    color: var(--accent);
   }
 
   * {
@@ -686,12 +607,7 @@
   <main class="admin-main">
     <header class="top-header">
       <h1 id="page-title">Trainees Directory &amp; Status</h1>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <button class="theme-toggle-btn" id="theme-toggle-btn-admin" onclick="if(window.NexsusState) window.NexsusState.toggleTheme();" aria-label="Toggle Light/Dark Theme" title="Toggle Light/Dark Theme">
-          <span class="theme-icon">🌙</span>
-        </button>
-        <span class="badge badge-role-admin">Admin Authenticated</span>
-      </div>
+      <span class="badge badge-role-admin">Admin Authenticated</span>
     </header>
 
     <div class="content-area">

@@ -5,14 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Safety &amp; Ethics Quiz — Nexsus Logistics</title>
 <link rel="stylesheet" href="/static/css/style.css">
-<script>
-  (function(){
-    var t = localStorage.getItem('nexsus_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', t);
-  })();
-</script>
 <style>
-  :root, [data-theme="dark"] {
+  :root {
     --bg-dark: #12161C;
     --panel: #171C24;
     --panel-card: #1C232E;
@@ -24,22 +18,6 @@
     --success: #2BAE66;
     --danger: #E8590C;
     --warning: #F5B700;
-  }
-
-  [data-theme="light"],
-  :root[data-theme="light"],
-  body[data-theme="light"] {
-    --bg-dark: #F4F6FB;
-    --panel: #FFFFFF;
-    --panel-card: #FFFFFF;
-    --ink: #0F172A;
-    --muted: #475569;
-    --line: #E2E8F0;
-    --accent: #2563EB;
-    --accent-soft: rgba(37, 99, 235, 0.1);
-    --success: #16A34A;
-    --danger: #DC2626;
-    --warning: #D97706;
   }
 
   * {
@@ -115,10 +93,6 @@
     border-radius: 10px;
     padding: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  }
-
-  [data-theme="light"] .quiz-card {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
   }
 
   .progress-header {
@@ -315,10 +289,6 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   }
 
-  [data-theme="light"] .sim-card-btn:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  }
-
   .sim-card-btn h3 {
     font-size: 17px;
     color: var(--accent);
@@ -352,12 +322,6 @@
     background: #253142;
     color: var(--ink);
     border: 1px solid #38485E;
-  }
-
-  [data-theme="light"] .btn-secondary {
-    background: #F1F5F9;
-    color: #0F172A;
-    border-color: #CBD5E1;
   }
 
   .answers-review {
@@ -403,12 +367,7 @@
     </div>
   </a>
 
-  <div class="navbar-right-controls">
-    <button class="theme-toggle-btn" id="theme-toggle-btn-nav" aria-label="Toggle Light/Dark Theme" title="Toggle Light/Dark Theme">
-      <span class="theme-icon">🌙</span>
-    </button>
-    <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Menu">☰</button>
-  </div>
+  <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Menu">☰</button>
 
   <ul class="nav-links">
     <li><a href="/home/">Home</a></li>
@@ -429,12 +388,6 @@
       <li><a href="/login/">Login</a></li>
       <li><a href="/signup/">Sign Up</a></li>
     {% endif %}
-
-    <li class="mobile-theme-item">
-      <button class="theme-toggle-btn mobile-theme-link" id="theme-toggle-btn-drawer">
-        <span class="theme-icon">🌙</span> <span class="theme-label">Switch to Light Mode</span>
-      </button>
-    </li>
   </ul>
 </nav>
 

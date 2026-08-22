@@ -5,17 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About — Nexsus Logistics</title>
 <link rel="stylesheet" href="/static/css/style.css">
-<script>
-  (function(){
-    var t = localStorage.getItem('nexsus_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', t);
-  })();
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-  :root, [data-theme="dark"] {
+  :root {
     --navy: #EDEFF2;
     --navy-2: #171C24;
     --concrete: #12161C;
@@ -27,21 +21,6 @@
     --line-light: rgba(255,255,255,0.08);
     --hero-bg: #101A2B;
     --hero-fg: #ECE9E1;
-  }
-  [data-theme="light"],
-  :root[data-theme="light"],
-  body[data-theme="light"] {
-    --navy: #101A2B;
-    --navy-2: #FFFFFF;
-    --concrete: #F4F6FB;
-    --concrete-2: #E8EDF5;
-    --orange: #D9480F;
-    --steel: #4A6274;
-    --text-muted-custom: #3B4A5C;
-    --line-dark: rgba(16,26,43,0.15);
-    --line-light: rgba(16,26,43,0.08);
-    --hero-bg: #152238;
-    --hero-fg: #F8FAFC;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -251,12 +230,7 @@
     </div>
   </a>
 
-  <div class="navbar-right-controls">
-    <button class="theme-toggle-btn" id="theme-toggle-btn-nav" aria-label="Toggle Light/Dark Theme" title="Toggle Light/Dark Theme">
-      <span class="theme-icon">🌙</span>
-    </button>
-    <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Menu">☰</button>
-  </div>
+  <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Menu">☰</button>
 
   <ul class="nav-links">
     <li><a href="/home/">Home</a></li>
@@ -281,12 +255,6 @@
       <li><a href="/login/">Login</a></li>
       <li><a href="/signup/">Sign Up</a></li>
     {% endif %}
-
-    <li class="mobile-theme-item">
-      <button class="theme-toggle-btn mobile-theme-link" id="theme-toggle-btn-drawer">
-        <span class="theme-icon">🌙</span> <span class="theme-label">Switch to Light Mode</span>
-      </button>
-    </li>
   </ul>
 </nav>
 
