@@ -5,32 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nexsus Logistics &amp; Warehousing Company — Home</title>
 <link rel="stylesheet" href="./css/style.css">
-<script>
-  (function(){
-    var t = localStorage.getItem('nexsus_theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', t);
-  })();
-</script>
 <style>
-  /* Light Theme Specific Styles */
-  [data-theme="light"] .hero-section {
-    background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
-  }
-  [data-theme="light"] .btn-primary {
-    color: #FFFFFF;
-  }
-  [data-theme="light"] .btn-secondary:hover {
-    background: #E2E8F0;
-  }
-  [data-theme="light"] .status-card,
-  [data-theme="light"] .status-widget,
-  [data-theme="light"] .step-card,
-  [data-theme="light"] .portal-card {
-    background: #FFFFFF;
-    border-color: #E2E8F0;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-  }
-
   /* Page Specific Hero Styles */
   .hero-section {
     padding: 70px 0 60px 0;
@@ -301,12 +276,7 @@
     </div>
   </a>
 
-  <div class="navbar-right-controls">
-    <button class="theme-toggle-btn" id="theme-toggle-btn-nav" aria-label="Toggle Light/Dark Theme" title="Toggle Light/Dark Theme">
-      <span class="theme-icon">🌙</span>
-    </button>
-    <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Menu">☰</button>
-  </div>
+  <button class="mobile-toggle" id="mobile-nav-toggle" aria-label="Toggle Menu">☰</button>
 
   <ul class="nav-links">
     <li><a href="./home.html" class="active">Home</a></li>
@@ -321,12 +291,6 @@
       </ul>
     </li>
     <li><a href="./contact.html">Contact</a></li>
-
-    <li class="mobile-theme-item">
-      <button class="theme-toggle-btn mobile-theme-link" id="theme-toggle-btn-drawer">
-        <span class="theme-icon">🌙</span> <span class="theme-label">Switch to Light Mode</span>
-      </button>
-    </li>
   </ul>
 </nav>
 
